@@ -37,29 +37,24 @@
     </nav><!-- End: Navbar With Button -->
     <hr style="margin-top: 0px;"><!-- Start: Open Menu -->
     <div class="d-flex d-lg-flex align-items-center" style="height: 100%;position: fixed;"><button class="btn btn-primary d-lg-flex align-items-lg-center" type="button" style="margin-left: 16px;height: 64px;background: rgba(27,59,107,0.75);" data-bs-target="#offcanvas-menu" data-bs-toggle="offcanvas"><i class="fas fa-play" style="transform: scaleY(2);"></i></button></div><!-- End: Open Menu -->
-    <!-- Start: Content profil -->
+    <!-- Start: Content reservation -->
     <section style="margin-top: 24px;margin-bottom: 24px;min-height: 65rem;">
-        <!-- Start: Welcome -->
-        <div class="container d-flex d-lg-flex flex-column align-items-center align-items-lg-center" style="background: var(--bs-focus-ring-color);border-radius: 15px;padding-top: 12px;padding-bottom: 12px;margin-bottom: 24px;">
-            <h1 class="fw-semibold" style="color: var(--bs-primary);font-family: 'Dancing Script', serif;text-shadow: 1px 1px 5px var(--bs-white);">Welcome</h1>
-            <h3 class="text-center" style="color: var(--bs-emphasis-color);">Your want to <strong>open </strong>your hotel on Akkor? Let's turn up your <strong>visite </strong>and generate more <strong>reservations </strong>now?</h3><button class="btn btn-primary btn-lg" type="button" style="background: var(--bs-primary);">Add my business</button>
-        </div><!-- End: Welcome -->
         <!-- Start: Profil option -->
-        <div class="container">
-            <h1 style="padding-bottom: 24px;color: var(--bs-primary);">Profile options</h1><!-- Start: Form Email -->
-            <form class="d-flex justify-content-center justify-content-lg-center" style="margin-bottom: 24px;">
-                <div style="max-width: 280px;margin-right: 24px;"><small class="form-text">Change your email :</small><input class="form-control" type="text" placeholder="Choose your new email ?" name="Email field" value="Your_current_email" inputmode="email"></div><button class="btn btn-primary" type="button">Change</button>
-            </form><!-- End: Form Email -->
-            <hr><!-- Start: Form Password -->
-            <form class="d-flex justify-content-center justify-content-lg-center" style="margin-bottom: 24px;">
-                <div style="max-width: 280px;margin-right: 24px;"><small class="form-text">Change your password:</small><input class="form-control" type="password" placeholder="Choose your new password?" name="Email field"></div><button class="btn btn-primary" type="button">Change</button>
-            </form><!-- End: Form Password -->
-            <hr><!-- Start: Form remove account -->
-            <form class="d-flex flex-column align-items-center">
-                <h3>If you <strong>remove </strong>your account, <strong>all </strong>of your <strong>data </strong>will be loose include your <strong>business</strong>, this action can'nt be restore. If you want, you can recreate an account after if you need id again.</h3><button class="btn btn-danger" type="button" style="max-width: 280px;margin-top: 12px;">Remove my account (definitely)</button>
-            </form><!-- End: Form remove account -->
+        <div class="container" style="padding-top: 12px;padding-bottom: 12px;">
+            <h1 class="text-primary" style="padding-bottom: 24px;">Change your status</h1>
+            <h2 class="text-center">You have an hotel and you want to make them <strong>appear </strong>on Akkor, let's registre <strong>some informations </strong>and make them <strong>grow up</strong> with Akkor!</h2>
+            <hr>
         </div><!-- End: Profil option -->
-    </section><!-- End: Content profil -->
+        <!-- Start: Form Add to existing hotel -->
+        <div class="container" style="padding-top: 12px;padding-bottom: 12px;">
+            <!-- Start: Form existing hotel -->
+            <form class="d-flex flex-column justify-content-center">
+                <h3>I work in a hotel already on Akkor and I want to add myself like an employee</h3>
+                <div style="padding-top: 12px;padding-bottom: 12px;"><small class="form-text">What's my hotel name ?</small><input class="form-control" type="search" name="Hotel name" placeholder="Enter you hotel name's" required=""></div><button class="btn btn-primary" type="button">Become an employee</button>
+            </form><!-- End: Form existing hotel -->
+            <hr>
+        </div><!-- End: Form Add to existing hotel -->
+    </section><!-- End: Content reservation -->
     <!-- Start: Sidebar With Menu -->
     <div class="offcanvas offcanvas-start bg-body" tabindex="-1" data-bs-backdrop="false" id="offcanvas-menu">
         <div class="offcanvas-header"><a class="link-body-emphasis d-flex align-items-center me-md-auto mb-3 mb-md-0 text-decoration-none" href="/"><i class="fa fa-user-circle me-3" style="font-size: 25px;"></i><span class="fs-4">Your_name@mail.com</span></a><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="offcanvas"></button></div>
@@ -67,18 +62,18 @@
             <div>
                 <hr class="mt-0">
                 <ul class="nav nav-pills flex-column mb-auto">
-                    <li class="nav-item"><a class="nav-link active link-light text-bg-primary" aria-current="page" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-house-door me-2">
+                    <li class="nav-item"><a class="nav-link link-body-emphasis" href="profil.html" aria-current="page"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-house-door me-2">
                                 <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4z"></path>
                             </svg> Profil information</a></li>
-                    <li class="nav-item"><a class="nav-link link-body-emphasis" href="reservation.html"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-calendar-plus me-2">
+                    <li class="nav-item"></li>
+                    <li class="nav-item"><a class="nav-link link-body-emphasis" href="reservation.html" style="background: rgba(255,255,255,0);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-calendar-plus me-2">
                                 <path d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7"></path>
                                 <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"></path>
-                            </svg> Reservation</a></li>
-                    <li class="nav-item"><a class="nav-link link-body-emphasis" href="business.html"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-speedometer2 me-2">
+                            </svg> Reservation</a><a class="nav-link link-body-emphasis" href="business.html"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-speedometer2 me-2">
                                 <path d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4M3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10m9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5m.754-4.246a.389.389 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.389.389 0 0 0-.029-.518z"></path>
                                 <path fill-rule="evenodd" d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 1.602-2.932 1.25C11.309 13.488 9.475 13 8 13c-1.474 0-3.31.488-4.615.911-1.087.352-2.49.003-2.932-1.25A7.988 7.988 0 0 1 0 10m8-7a7 7 0 0 0-6.603 9.329c.203.575.923.876 1.68.63C4.397 12.533 6.358 12 8 12s3.604.532 4.923.96c.757.245 1.477-.056 1.68-.631A7 7 0 0 0 8 3"></path>
                             </svg> Business information</a></li>
-                    <li class="nav-item"><a class="nav-link link-body-emphasis" href="status.html"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-grid me-2">
+                    <li class="nav-item"><a class="nav-link active link-light text-bg-primary" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-grid me-2">
                                 <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z"></path>
                             </svg> Update my status</a></li>
                     <li class="nav-item"><a class="nav-link link-body-emphasis" href="admin.html"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-people me-2">
