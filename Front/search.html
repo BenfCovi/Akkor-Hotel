@@ -30,16 +30,24 @@
                             <path d="M399 384.2C376.9 345.8 335.4 320 288 320H224c-47.4 0-88.9 25.8-111 64.2c35.2 39.2 86.2 63.8 143 63.8s107.8-24.7 143-63.8zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 16a72 72 0 1 0 0-144 72 72 0 1 0 0 144z"></path>
                         </svg></button><!-- End: Login -->
                 </div><!-- End: Not Connected -->
+                <!-- Start: Connected -->
+                <div class="d-flex align-items-lg-center">
+                    <!-- Start: Disconnect --><a class="btn btn-primary" role="button" style="background: var(--bs-body-bg);color: var(--bs-emphasis-color);border-radius: 0px;border-style: none;border-right-style: none;border-right-color: var(--bs-gray);border-left-width: 0px;border-left-style: none;" href="index.html">Disconnect</a><!-- End: Disconnect -->
+                    <hr class="vr"><!-- Start: Profil --><a class="btn btn-primary" role="button" style="color: var(--bs-navbar-brand-color);background: var(--bs-body-bg);border-radius: 0px;border-style: none;border-right-style: none;border-left: 0px none var(--bs-gray-600) ;" href="profil.html">Profil<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1em" height="1em" fill="currentColor" style="width: 20px;height: 20px;margin-left: 10px;">
+                            <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+                            <path d="M399 384.2C376.9 345.8 335.4 320 288 320H224c-47.4 0-88.9 25.8-111 64.2c35.2 39.2 86.2 63.8 143 63.8s107.8-24.7 143-63.8zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 16a72 72 0 1 0 0-144 72 72 0 1 0 0 144z"></path>
+                        </svg></a><!-- End: Profil -->
+                </div><!-- End: Connected -->
             </div>
         </div>
     </nav><!-- End: Navbar With Button -->
     <!-- Start: Fast Search Area -->
     <div class="container d-flex flex-column justify-content-center align-items-center align-items-xxl-center" style="background: url(&quot;assets/img/header-bg.webp&quot;) center / cover no-repeat;margin: 0px;padding: 16px;max-width: none;padding-top: 30px;padding-bottom: 45px;">
-        <div class="d-flex" style="background: rgba(33,37,41,0.45);max-width: 1000px;border-color: rgb(33, 37, 41);border-radius: 15px;margin-bottom: 8px;">
+        <div class="d-flex" style="background: rgba(33,37,41,0.45);max-width: 1000px;border-color: rgb(33, 37, 41);border-radius: 12px;margin-bottom: 8px;">
             <h1 class="text-uppercase d-flex d-lg-flex justify-content-end align-items-center align-items-lg-center" style="color: var(--bs-body-bg);text-align: right;margin-right: 8px;text-shadow: 1px 1px var(--bs-body-color);">Find a hotel and book it now</h1>
             <h1 class="d-flex d-lg-flex justify-content-start align-items-center align-items-lg-center" style="color: var(--bs-info);font-size: 45px;margin-left: 8px;text-shadow: 1px 1px var(--bs-body-color);font-family: 'Dancing Script', serif;">The perfect story wait for you</h1>
         </div>
-        <form class="d-flex justify-content-center flex-wrap" style="background: var(--bs-body-bg);border-radius: 15px;padding: 20px;padding-top: 12px;padding-bottom: 30px;">
+        <form class="d-flex justify-content-center flex-wrap" style="background: var(--bs-body-bg);border-radius: 12px;padding: 20px;padding-top: 12px;padding-bottom: 30px;">
             <!-- Start: Input Destination -->
             <div style="margin-right: 12px;margin-left: 12px;margin-top: 6px;"><small class="form-text d-flex">Destination ? (Need)</small><input class="form-control" type="text" name="destination" placeholder="What's your destination ?" style="height: 48px;padding-right: 20px;padding-left: 6px;text-align: left;" required=""></div><!-- End: Input Destination -->
             <!-- Start: Input Date -->
@@ -49,7 +57,7 @@
                 </div>
             </div><!-- End: Input Date -->
             <!-- Start: Input Room -->
-            <div class="d-flex d-lg-flex flex-column" style="margin-right: 12px;margin-left: 12px;margin-top: 6px;"><small class="form-text">Room ?</small><input class="form-control" type="number" style="height: 48px;width: 70px;padding-left: 6px;text-align: center;" name="number room" min="1" value="1"></div><!-- End: Input Room -->
+            <div class="d-flex d-lg-flex flex-column" style="margin-right: 12px;margin-left: 12px;margin-top: 6px;"><small class="form-text">Room ?</small><input class="form-control" type="number" style="height: 48px;width: 70px;padding-left: 6px;text-align: center;" name="number room" min="1" value="1" required=""></div><!-- End: Input Room -->
             <!-- Start: Button Validate -->
             <div class="d-flex d-lg-flex align-items-end align-items-sm-end align-items-lg-end" style="height: 73px;margin-top: 6px;margin-right: 12px;margin-left: 12px;"><button class="btn btn-primary" type="submit" style="height: 48px;margin-top: 6px;">Find your Hotel</button></div><!-- End: Button Validate -->
         </form>
@@ -134,8 +142,8 @@
     </div><!-- End: Discover Area -->
     <!-- Start: Shearch by city -->
     <div class="container" style="background: var(--bs-primary-border-subtle);max-width: none;padding: 12px;padding-right: 22px;padding-left: 22px;">
-        <div style="background: var(--bs-body-bg);">
-            <h1 style="margin-top: -1px;padding-top: 12px;padding-left: 12px;">We have hotel in all this cities</h1><!-- Start: City name -->
+        <div style="background: var(--bs-body-bg);border-radius: 12px;">
+            <h3 style="margin-top: -1px;padding-top: 12px;padding-left: 12px;">We have hotel in all this cities</h3><!-- Start: City name -->
             <div class="d-flex flex-column flex-wrap" style="padding: 12px;max-height: 30rem;overflow: auto;">
                 <p style="margin-bottom: 8px;margin-top: 8px;">A</p><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">Alabama</a><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">Alabama</a><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">Alabama</a><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">Alabama</a><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">Alabama</a><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">Alabama</a>
                 <p style="margin-top: 8px;margin-bottom: 8px;">C</p><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">California</a><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">California</a><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">California</a><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">California</a><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">California</a><a class="text-capitalize" href="#" style="margin-top: 3px;color: var(--bs-primary);">California</a>
