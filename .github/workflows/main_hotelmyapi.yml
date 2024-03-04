@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy dotnet core app to Azure Function App - AkkorAPI
+name: Build and deploy dotnet core app to Azure Function App - hotelmyapi
 
 on:
   push:
@@ -38,15 +38,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_A4BD2BD96F004B6FA1F0646F68BAFAB6 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_08730657A30B4C95BE22C7D0406929A2 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_98BC99FF45F948A1BBD7AFB3E90E6479 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_62FC222476C549A6856381BE76581A69 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A70CFC9C6D5D4BB4AB88FD7B9F077848 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DC3AD7522A654344910F58C0C72F3575 }}
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: 'AkkorAPI'
+          app-name: 'hotelmyapi'
           slot-name: 'Production'
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
           
