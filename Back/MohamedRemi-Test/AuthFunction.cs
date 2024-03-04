@@ -6,50 +6,53 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using static MohamedRemi_Test.UserCrud;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
+using Microsoft.OpenApi.Models;
+using static MohamedRemi_Test.UserCrud;
+using System.Net;
 
 namespace MohamedRemi_Test
 {
     public class AuthFunction
     {
-        #region Constructor
+        private static IMongoCollection<User> _usersCollection;
+
         static AuthFunction()
         {
             var client = new MongoClient(Environment.GetEnvironmentVariable("MongoDBConnection"));
             var database = client.GetDatabase("SocialMediaDB");
             _usersCollection = database.GetCollection<User>("users");
         }
-        #endregion
-
-        #region Attributs
-        private static IMongoCollection<User> _usersCollection;
-        #endregion
-
-        #region Fonctions
 
         [FunctionName("AuthFunction")]
-        public static async Task<IActionResult> Get([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req, ILogger log)
+        [OpenApiOperation(operationId: "authenticateUser", tags: new[] { "User Authentication" })]
+        [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(AuthRequest), Required = true, Description = "User authentication request")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(AuthResponse), Description = "The authentication token if authentication is successful")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request, missing username or password")]
+        public static async Task<IActionResult> AuthenticateUser(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
+            ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request for authentication.");
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JObject.Parse(requestBody);
-            string username = data?.username;
+            string email = data?.email;
             string password = data?.password;
 
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
                 return new BadRequestResult();
             }
 
-            var filter = Builders<User>.Filter.Eq(u => u.Email, username);
+            var filter = Builders<User>.Filter.Eq(u => u.Email, email);
             var user = await _usersCollection.Find(filter).FirstOrDefaultAsync();
 
             if (user != null)
@@ -57,9 +60,8 @@ namespace MohamedRemi_Test
                 var hashedPassword = HashPassword(password);
                 if (user.PasswordHash == hashedPassword)
                 {
-                    // Generate a token
-                    var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(username));
-                    return new OkObjectResult(new { token = token });
+                    var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(email)); // Consider using a more secure token generation strategy
+                    return new OkObjectResult(new AuthResponse { Token = token });
                 }
             }
 
@@ -75,6 +77,15 @@ namespace MohamedRemi_Test
             }
         }
 
-        #endregion
+        public class AuthRequest
+        {
+            public string Email { get; set; }
+            public string Password { get; set; }
+        }
+
+        public class AuthResponse
+        {
+            public string Token { get; set; }
+        }
     }
 }
