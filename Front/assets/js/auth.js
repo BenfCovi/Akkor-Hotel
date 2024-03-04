@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         users.push({ email, password });
         localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('userToken', 'fakeToken123');
+        localStorage.setItem('userToken', JSON.stringify(users));
         alert('Registration successful. You are now logged in.');
         $('#modal-signin').modal('hide');
         window.location.reload();
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const user = users.find(user => user.email === email && user.password === password);
         if (user) {
-            localStorage.setItem('userToken', 'fakeToken123');
+            localStorage.setItem('userToken', JSON.stringify(users));
             alert('Login successful.');
             $('#modal-login').modal('hide');
             window.location.reload();
