@@ -49,7 +49,7 @@ namespace MohamedRemi_Test
                 return new BadRequestResult();
             }
 
-            var filter = Builders<User>.Filter.Eq(u => u.Username, username);
+            var filter = Builders<User>.Filter.Eq(u => u.Email, username);
             var user = await _usersCollection.Find(filter).FirstOrDefaultAsync();
 
             if (user != null)
