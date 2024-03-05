@@ -1,0 +1,14 @@
+Revoir l'attente de la requete create reservation car actuellement les information ne corresponde pas.
+Vérifier que la réservation récupère l'user id avec le token
+
+Changer la fonction getreservation pour récupérer les reservation en envoyant uniquement le token de l'utilisateur dans la fonction.
+ou créer une fonction getreservationforuser qui prend que le token de l'user
+de même créer une fonction getreservationforhotel pour récupérer toutes les réservation encore à jour de cette hotel donc date fin > aujourd'hui.
+
+J'ai besoin d"une fonction pour récupérer l'id de l'utilisateur avec son token pour les fonction de modification d'utilisateur 
+car ce dernier dois pouvoir ce modifier soit même mais doit aussi pourvoir être modifié par un admin.
+
+J'aimerai une requete pour le chnagement de status genre settobusiness qui prend le token de l'user et le nom d'un hotel et qui va ensuite changer dans la base de donnée
+la valeur de rôle de l'utilisateur connecté à 1 puis va ajouté l'id de l'hotel dans notre utilisateur devenu employé.
+
+J'ai besoin d'une fonction getmyemail pour récupérer l'email avec le token
