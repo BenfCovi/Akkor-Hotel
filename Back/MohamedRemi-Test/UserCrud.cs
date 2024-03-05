@@ -63,7 +63,7 @@ namespace MohamedRemi_Test
         [OpenApiOperation(operationId: "createUser", tags: new[] { "User" })]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(User), Required = true, Description = "User creation request object")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.Created, contentType: "application/json", bodyType: typeof(User), Description = "The created user object, ID will be generated automatically")]
-        public static async Task<IActionResult> Post([HttpTrigger(AuthorizationLevel.Function, "post", Route = "Create")] HttpRequest req, ILogger log)
+        public static async Task<IActionResult> Post([HttpTrigger(AuthorizationLevel.Function, "post", Route = "User/Create")] HttpRequest req, ILogger log)
         {
             log.LogInformation("CreateUser function processed a request.");
 
@@ -98,7 +98,7 @@ namespace MohamedRemi_Test
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(User), Description = "The requested user object")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Unauthorized if token is invalid or expired")]
         public static async Task<IActionResult> GetUser(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "Get/{id}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "User/Get/{id}")] HttpRequest req,
             string id,
             ILogger log)
         {
@@ -154,7 +154,7 @@ namespace MohamedRemi_Test
                      BearerFormat = "JWT")]
         [OpenApiResponseWithBody(statusCode : HttpStatusCode.OK, "List of users", typeof(IEnumerable<User>))]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Unauthorized if token is invalid or expired")]
-        public static async Task<IActionResult> GetAllUsers([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,  ILogger log)
+        public static async Task<IActionResult> GetAllUsers([HttpTrigger(AuthorizationLevel.Function, "get", Route = "User/GetAllUsers")] HttpRequest req,  ILogger log)
         {
             log.LogInformation("GetAllUsers function processed a request.");
 
@@ -204,7 +204,7 @@ namespace MohamedRemi_Test
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Unauthorized if token is invalid or expired")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Bad request if user ID is missing or incorrect")]
         public static async Task<IActionResult> DeleteUser(
-        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "Delete/{id}")] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "User/Delete/{id}")] HttpRequest req,
         string id,
         ILogger log)
         {
@@ -262,7 +262,7 @@ namespace MohamedRemi_Test
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Unauthorized if token is invalid or expired")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Bad request if user data is missing or incorrect")]
         public static async Task<IActionResult> UpdateUser(
-            [HttpTrigger(AuthorizationLevel.Function, "put", Route = "Update/{id}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "put", Route = "User/Update/{id}")] HttpRequest req,
             string id,
             ILogger log)
         {
@@ -332,7 +332,7 @@ namespace MohamedRemi_Test
                 return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
             }
         }
-        private static bool ValidateToken(string token)
+        public static bool ValidateToken(string token)
         {
             try
             {

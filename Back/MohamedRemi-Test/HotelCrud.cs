@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using System.Net;
 using Microsoft.OpenApi.Models;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 
 namespace MohamedRemi_Test
 {
@@ -36,11 +37,11 @@ namespace MohamedRemi_Test
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
             public string Id { get; set; }
-            public string name { get; set; }
-            public string location { get; set; }
-            public string description { get; set; }
-            public Dictionary<int, string> picture_list { get; set; }
-            public List<RoomCrud.Room> rooms { get; set; }
+            public string Name { get; set; }
+            public string Location { get; set; }
+            public string Description { get; set; }
+            public Dictionary<int, string> PictureList { get; set; }
+            public int Capacity { get; set; }
             //public int nbRoom { get; set; }
 
             // Rajouter un Hotel non obligatoire
@@ -52,19 +53,51 @@ namespace MohamedRemi_Test
         #endregion
 
         #region Fonctions
+
         [FunctionName("CreateHotel")]
         [OpenApiOperation(operationId: "createHotel", tags: new[] { "Hotel" })]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(Hotel), Required = true, Description = "Hotel creation request object")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Hotel), Description = "The created hotel object, ID will be generated automatically")]
-        public static async Task<IActionResult> Post([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, ILogger log)
+        [OpenApiSecurity("Bearer",
+                         SecuritySchemeType.Http, Name = "authorization",
+                         Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
+                         BearerFormat = "JWT")]
+        public static async Task<IActionResult> CreateHotel(
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "Hotel/Create")] HttpRequest req,
+            ILogger log)
         {
             log.LogInformation("Creating a new hotel entry.");
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var hotel = JsonConvert.DeserializeObject<Hotel>(requestBody);
-            await _hotelsCollection.InsertOneAsync(hotel);
+            try
+            {
+                // Token validation
+                string authHeader = req.Headers["Authorization"];
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return new UnauthorizedResult();
+                }
 
-            return new OkObjectResult(hotel);
+                string token = authHeader.Substring("Bearer ".Length).Trim();
+                if (!UserCrud.ValidateToken(token))
+                {
+                    return new UnauthorizedResult();
+                }
+
+                // Read request body and deserialize into Hotel object
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                var hotel = JsonConvert.DeserializeObject<Hotel>(requestBody);
+
+                // Insert hotel into database
+                await _hotelsCollection.InsertOneAsync(hotel);
+
+                // Return created hotel object
+                return new OkObjectResult(hotel);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "An error occurred in CreateHotel function.");
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [FunctionName("GetHotel")]
@@ -72,7 +105,7 @@ namespace MohamedRemi_Test
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the hotel to retrieve")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Hotel), Description = "The requested hotel object")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if the hotel with the specified ID does not exist")]
-        public static async Task<IActionResult> Get([HttpTrigger(AuthorizationLevel.Function, "get", Route = "Hotel/{id}")] HttpRequest req, string id, ILogger log)
+        public static async Task<IActionResult> Get([HttpTrigger(AuthorizationLevel.Function, "get", Route = "Hotel/Get/{id}")] HttpRequest req, string id, ILogger log)
         {
             log.LogInformation("Getting a hotel by id.");
 
@@ -95,7 +128,7 @@ namespace MohamedRemi_Test
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(Hotel), Required = true, Description = "Hotel update request object")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Hotel), Description = "The updated hotel object")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if the hotel with the specified ID does not exist")]
-        public static async Task<IActionResult> Put([HttpTrigger(AuthorizationLevel.Function, "put", Route = "Hotel/{id}")] HttpRequest req, string id, ILogger log)
+        public static async Task<IActionResult> Put([HttpTrigger(AuthorizationLevel.Function, "put", Route = "Hotel/Update/{id}")] HttpRequest req, string id, ILogger log)
         {
             log.LogInformation("Updating a hotel.");
 
@@ -119,7 +152,7 @@ namespace MohamedRemi_Test
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the hotel to delete")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "OK if the hotel is successfully deleted")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if the hotel with the specified ID does not exist")]
-        public static async Task<IActionResult> Delete([HttpTrigger(AuthorizationLevel.Function, "delete", Route = "Hotel/{id}")] HttpRequest req, string id, ILogger log)
+        public static async Task<IActionResult> Delete([HttpTrigger(AuthorizationLevel.Function, "delete", Route = "Hotel/Delete/{id}")] HttpRequest req, string id, ILogger log)
         {
             log.LogInformation("Deleting a hotel.");
 
@@ -132,7 +165,7 @@ namespace MohamedRemi_Test
             return new OkResult();
         }
 
-
-        #endregion
+    
+#endregion 
     }
 }
