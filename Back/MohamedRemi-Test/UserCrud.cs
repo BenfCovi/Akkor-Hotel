@@ -205,7 +205,7 @@ namespace MohamedRemi_Test
                      BearerFormat = "JWT")]
         [OpenApiResponseWithBody(statusCode : HttpStatusCode.OK, "List of users", typeof(IEnumerable<User>))]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Unauthorized if token is invalid or expired")]
-        public static async Task<IActionResult> GetAllUsers([HttpTrigger(AuthorizationLevel.Function, "get", Route = "User/GetAllUsers")] HttpRequest req,  ILogger log)
+        public static async Task<IActionResult> GetAllUsers([HttpTrigger(AuthorizationLevel.Function, "get", Route = "User/GetAll")] HttpRequest req,  ILogger log)
         {
             log.LogInformation("GetAllUsers function processed a request.");
 

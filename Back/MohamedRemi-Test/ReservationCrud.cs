@@ -11,7 +11,13 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using static MohamedRemi_Test.RoomCrud;
+using System.Collections.Generic;
+using Microsoft.OpenApi.Models;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
+using System.Net;
+using static MohamedRemi_Test.HotelCrud;
+using static MohamedRemi_Test.UserCrud;
 
 namespace MohamedRemi_Test
 {
@@ -32,10 +38,9 @@ namespace MohamedRemi_Test
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
             public string Id { get; set; }
-            public UserCrud.User User { get; set; }
-            public HotelCrud.Hotel Hotel { get; set; }
-            public RoomCrud.Room Room { get; set; }
-            public int NumberOfPeople { get; set; }
+            public string IdUser { get; set; }
+            public string IdHotel { get; set; }
+            public int NumberOfRoom { get; set; }
             public DateTime StartDate { get; set; }
             public DateTime EndDate { get; set; }
         }
@@ -47,44 +52,84 @@ namespace MohamedRemi_Test
 
         #region Fonctions
 
+        // CRUD FONCTION CREATE - GET - UPDATE - DELETE (BEARER AUTHORISATION)
+
+        // FONCTION CreateReservation (CRUD)
         [FunctionName("CreateReservation")]
-        public static async Task<IActionResult> Create([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, ILogger log)
+        [OpenApiOperation(operationId: "createReservation", tags: new[] { "Reservation" })]
+        [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(Reservation), Required = true, Description = "Reservation creation request object")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.Created, contentType: "application/json", bodyType: typeof(Reservation), Description = "The created reservation object")]
+        [OpenApiSecurity("Bearer",
+                         SecuritySchemeType.Http, Name = "authorization",
+                         Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
+                         BearerFormat = "JWT")]
+        public static async Task<IActionResult> CreateReservation(
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "Reservation/Create")] HttpRequest req,
+            ILogger log)
         {
-            log.LogInformation("Creating a new reservation.");
+            // Token validation
+            string authHeader = req.Headers["Authorization"];
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            {
+                return new UnauthorizedResult();
+            }
+
+            string token = authHeader.Substring("Bearer ".Length).Trim();
+            if (!ValidateToken(token))
+            {
+                return new UnauthorizedResult();
+            }
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var reservation = JsonConvert.DeserializeObject<Reservation>(requestBody);
+            Reservation reservation = JsonConvert.DeserializeObject<Reservation>(requestBody);
 
-            // Vérification des dates
-            if (reservation.StartDate >= reservation.EndDate)
+            if (reservation == null || string.IsNullOrEmpty(reservation.IdUser) || string.IsNullOrEmpty(reservation.IdHotel))
             {
-                return new BadRequestObjectResult("La date de début doit être antérieure à la date de fin.");
+                return new BadRequestObjectResult("Hotel data is missing or incorrect.");
             }
 
-            // Vérifier la capacité de la chambre
-            if (reservation.NumberOfPeople > reservation.Room.capacity)
+            if (reservation.Id != "")
             {
-                return new BadRequestObjectResult("Le nombre de personnes dépasse la capacité maximale de la chambre.");
+                var existingHotel = await _reservationsCollection.Find(h => h.Id == reservation.Id).FirstOrDefaultAsync();
+                if (existingHotel != null)
+                {
+                    return new BadRequestObjectResult("Hotel is already.");
+                }
             }
-
-            // Vérification de la disponibilité de la chambre (implémentez cette fonction basée sur la logique fournie précédemment)
-            bool available = await IsRoomAvailable(reservation.Room.Id, reservation.StartDate, reservation.EndDate);
-            if (!available)
-            {
-                return new BadRequestObjectResult("La chambre n'est pas disponible pour les dates sélectionnées.");
-            }
-
             await _reservationsCollection.InsertOneAsync(reservation);
-            return new OkObjectResult(reservation);
+            return new CreatedResult("Reservation", reservation);
+
         }
 
-        [FunctionName("GetReservation")]
-        public static async Task<IActionResult> Get([HttpTrigger(AuthorizationLevel.Function, "get", Route = "reservation/{id}")] HttpRequest req, ILogger log, string id)
+        // FONCTION GetReservationById (CRUD)
+        [FunctionName("GetReservationById")]
+        [OpenApiOperation(operationId: "getReservationById", tags: new[] { "Reservation" })]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the reservation to retrieve")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Reservation), Description = "The requested reservation object")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if the reservation with the specified ID does not exist")]
+        [OpenApiSecurity("Bearer",
+                         SecuritySchemeType.Http, Name = "authorization",
+                         Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
+                         BearerFormat = "JWT")]
+        public static async Task<IActionResult> GetReservationById(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "Reservation/Get/{id}")] HttpRequest req,
+            string id,
+            ILogger log)
         {
-            log.LogInformation("Getting a reservation by id.");
+            // Token validation
+            string authHeader = req.Headers["Authorization"];
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            {
+                return new UnauthorizedResult();
+            }
+
+            string token = authHeader.Substring("Bearer ".Length).Trim();
+            if (!ValidateToken(token))
+            {
+                return new UnauthorizedResult();
+            }
 
             var reservation = await _reservationsCollection.Find<Reservation>(r => r.Id == id).FirstOrDefaultAsync();
-
             if (reservation == null)
             {
                 return new NotFoundResult();
@@ -93,33 +138,79 @@ namespace MohamedRemi_Test
             return new OkObjectResult(reservation);
         }
 
+        // FONCTION UpdateReservation (CRUD)
         [FunctionName("UpdateReservation")]
-        public static async Task<IActionResult> Put( [HttpTrigger(AuthorizationLevel.Function, "put", Route = "reservation/{id}")] HttpRequest req, ILogger log, string id)
+        [OpenApiOperation(operationId: "updateReservation", tags: new[] { "Reservation" })]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the reservation to update")]
+        [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(Reservation), Required = true, Description = "Reservation update request object")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Reservation), Description = "The updated reservation object")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if the reservation with the specified ID does not exist")]
+        [OpenApiSecurity("Bearer",
+                         SecuritySchemeType.Http, Name = "authorization",
+                         Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
+                         BearerFormat = "JWT")]
+        public static async Task<IActionResult> UpdateReservation(
+            [HttpTrigger(AuthorizationLevel.Function, "put", Route = "Reservation/Update/{id}")] HttpRequest req,
+            string id,
+            ILogger log)
         {
-            log.LogInformation("Updating a reservation.");
+            // Token validation
+            string authHeader = req.Headers["Authorization"];
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            {
+                return new UnauthorizedResult();
+            }
 
-            var reservation = await _reservationsCollection.Find<Reservation>(r => r.Id == id).FirstOrDefaultAsync();
-            if (reservation == null)
+            string token = authHeader.Substring("Bearer ".Length).Trim();
+            if (!ValidateToken(token))
+            {
+                return new UnauthorizedResult();
+            }
+
+            var reservationToUpdate = await _reservationsCollection.Find<Reservation>(r => r.Id == id).FirstOrDefaultAsync();
+            if (reservationToUpdate == null)
             {
                 return new NotFoundResult();
             }
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var updatedReservation = JsonConvert.DeserializeObject<Reservation>(requestBody);
-            updatedReservation.Id = reservation.Id; // Ensure the ID is not changed
+            updatedReservation.Id = reservationToUpdate.Id; // Ensure the ID is not changed
 
             await _reservationsCollection.ReplaceOneAsync(r => r.Id == id, updatedReservation);
 
             return new OkObjectResult(updatedReservation);
         }
 
+        // FONCTION DeleteReservation (CRUD)
         [FunctionName("DeleteReservation")]
-        public static async Task<IActionResult> Delete([HttpTrigger(AuthorizationLevel.Function, "delete", Route = "reservation/{id}")] HttpRequest req, ILogger log, string id)
+        [OpenApiOperation(operationId: "deleteReservation", tags: new[] { "Reservation" })]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the reservation to delete")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "OK if the reservation is successfully deleted")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if the reservation with the specified ID does not exist")]
+        [OpenApiSecurity("Bearer",
+                         SecuritySchemeType.Http, Name = "authorization",
+                         Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
+                         BearerFormat = "JWT")]
+        public static async Task<IActionResult> DeleteReservation(
+            [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "Reservation/Delete/{id}")] HttpRequest req,
+            string id,
+            ILogger log)
         {
-            log.LogInformation("Deleting a reservation.");
+            // Token validation
+            string authHeader = req.Headers["Authorization"];
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            {
+                return new UnauthorizedResult();
+            }
+
+            string token = authHeader.Substring("Bearer ".Length).Trim();
+            if (!ValidateToken(token))
+            {
+                return new UnauthorizedResult();
+            }
 
             var deleteResult = await _reservationsCollection.DeleteOneAsync(r => r.Id == id);
-
             if (deleteResult.DeletedCount == 0)
             {
                 return new NotFoundResult();
@@ -128,29 +219,140 @@ namespace MohamedRemi_Test
             return new OkResult();
         }
 
-        private static async Task<bool> IsRoomAvailable(string roomId, DateTime startDate, DateTime endDate)
+        // FONCTION GetAllRestervations (qui recupere tout les Reservations) (BEARER AUTHORISATION)
+        [FunctionName("GetAllReservations")]
+        [OpenApiOperation(operationId: "getAllReservations", tags: new[] { "Reservation" })]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<Reservation>), Description = "The list of all reservations")]
+        [OpenApiSecurity("Bearer",
+                         SecuritySchemeType.Http, Name = "authorization",
+                         Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
+                         BearerFormat = "JWT")]
+        public static async Task<IActionResult> GetAllReservations(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "Reservation/GetAll")] HttpRequest req,
+            ILogger log)
         {
-            var filterBuilder = Builders<Reservation>.Filter;
-            var filter = filterBuilder.And(
-                filterBuilder.Eq(reservation => reservation.Room.Id, roomId),
-                filterBuilder.Or(
-                    filterBuilder.And(
-                        filterBuilder.Lte(reservation => reservation.StartDate, startDate),
-                        filterBuilder.Gte(reservation => reservation.EndDate, startDate)
-                    ),
-                    filterBuilder.And(
-                        filterBuilder.Lte(reservation => reservation.StartDate, endDate),
-                        filterBuilder.Gte(reservation => reservation.EndDate, endDate)
-                    ),
-                    filterBuilder.And(
-                        filterBuilder.Gte(reservation => reservation.StartDate, startDate),
-                        filterBuilder.Lte(reservation => reservation.EndDate, endDate)
-                    )
-                )
-            );
 
-            var existingReservations = await _reservationsCollection.CountDocumentsAsync(filter);
-            return existingReservations == 0;
+            try
+            {
+                // Token validation
+                string authHeader = req.Headers["Authorization"];
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return new UnauthorizedResult();
+                }
+
+                string token = authHeader.Substring("Bearer ".Length).Trim();
+                if (!ValidateToken(token))
+                {
+                    return new UnauthorizedResult();
+                }
+
+                var reservations = await _reservationsCollection.Find(r => true).ToListAsync();
+
+                if (reservations == null || reservations.Count == 0)
+                {
+                    return new NotFoundResult();
+                }
+
+                return new OkObjectResult(reservations);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "An error occurred while getting all reservations.");
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
+        }
+
+        // FONCTION GetAllReservationsByUser (qui recupere tout les Reservations d'un utilisateur) (BEARER AUTHORISATION)
+        [FunctionName("GetAllReservationsByUser")]
+        [OpenApiOperation(operationId: "getAllReservationsByUser", tags: new[] { "Reservation" })]
+        [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the user")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<Reservation>), Description = "The list of reservations made by the user")]
+        [OpenApiSecurity("Bearer",
+                         SecuritySchemeType.Http, Name = "authorization",
+                         Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
+                         BearerFormat = "JWT")]
+        public static async Task<IActionResult> GetAllReservationsByUser(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "Reservation/GetAllByUser/{userId}")] HttpRequest req,
+            string userId,
+            ILogger log)
+        {
+            try
+            {
+                // Token validation
+                string authHeader = req.Headers["Authorization"];
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return new UnauthorizedResult();
+                }
+
+                string token = authHeader.Substring("Bearer ".Length).Trim();
+                if (!ValidateToken(token))
+                {
+                    return new UnauthorizedResult();
+                }
+
+                var reservations = await _reservationsCollection.Find(r => r.IdUser == userId).ToListAsync();
+
+                if (reservations == null || reservations.Count == 0)
+                {
+                    return new NotFoundResult();
+                }
+
+                return new OkObjectResult(reservations);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "An error occurred while getting all reservations.");
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
+        }
+
+        // FONCTION GetAllReservationsByHotel (qui recupere tout les Reservations d'un Hotel)  (BEARER AUTHORISATION)
+        [FunctionName("GetAllReservationsByHotel")]
+        [OpenApiOperation(operationId: "getAllReservationsByHotel", tags: new[] { "Reservation" })]
+        [OpenApiParameter(name: "hotelId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the hotel")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<Reservation>), Description = "The list of reservations made for the hotel")]
+        [OpenApiSecurity("Bearer",
+                         SecuritySchemeType.Http, Name = "authorization",
+                         Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
+                         BearerFormat = "JWT")]
+        public static async Task<IActionResult> GetAllReservationsByHotel(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "Reservation/GetAllByHotel/{hotelId}")] HttpRequest req,
+            string hotelId,
+            ILogger log)
+        {
+            try
+            {
+                // Token validation
+                string authHeader = req.Headers["Authorization"];
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return new UnauthorizedResult();
+                }
+
+                string token = authHeader.Substring("Bearer ".Length).Trim();
+                if (!ValidateToken(token))
+                {
+                    return new UnauthorizedResult();
+                }
+
+                var reservations = await _reservationsCollection.Find(r => r.IdHotel == hotelId).ToListAsync();
+
+                if (reservations == null || reservations.Count == 0)
+                {
+                    return new NotFoundResult();
+                }
+
+                return new OkObjectResult(reservations);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "An error occurred while getting all reservations.");
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
         }
         #endregion
     }
