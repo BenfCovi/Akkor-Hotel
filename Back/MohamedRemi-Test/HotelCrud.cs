@@ -18,6 +18,9 @@ using System.Net;
 using Microsoft.OpenApi.Models;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using static MohamedRemi_Test.UserCrud;
+using static MohamedRemi_Test.ReservationCrud;
+using System.Linq;
+using static MohamedRemi_Test.HotelCrud;
 
 namespace MohamedRemi_Test
 {
@@ -171,20 +174,27 @@ namespace MohamedRemi_Test
             }
         }
 
-        //GetLastHotels (8 derniers hotels inscrit dans la base Mongo DB)
+        //GetLastHotels (récupère les derniers hôtels inscrits dans la base MongoDB)
         [FunctionName("GetLastHotels")]
         [OpenApiOperation(operationId: "getLastHotels", tags: new[] { "Hotel" })]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<Hotel>), Description = "The list of last 8 hotels")]
+        [OpenApiParameter(name: "count", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The maximum number of hotels to retrieve")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<Hotel>), Description = "The list of last hotels")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if no hotels exist")]
         public static async Task<IActionResult> GetLastHotels(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "Hotel/GetLast")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "Hotel/GetLast/{count}")] HttpRequest req,
+            int count,
             ILogger log)
         {
-            log.LogInformation("Getting last 8 hotels.");
+            log.LogInformation($"Getting last {count} hotels.");
 
             try
             {
-                var hotels = await _hotelsCollection.Find(_ => true).SortByDescending(h => h.Id).Limit(8).ToListAsync();
+                if (count <= 0)
+                {
+                    return new BadRequestObjectResult("Invalid count value. Count should be a positive integer.");
+                }
+
+                var hotels = await _hotelsCollection.Find(_ => true).SortByDescending(h => h.Id).Limit(count).ToListAsync();
 
                 if (hotels == null || hotels.Count == 0)
                 {
@@ -195,7 +205,7 @@ namespace MohamedRemi_Test
             }
             catch (Exception ex)
             {
-                log.LogError(ex, "An error occurred while getting last 8 hotels.");
+                log.LogError(ex, "An error occurred while getting last hotels.");
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
@@ -228,7 +238,6 @@ namespace MohamedRemi_Test
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
-
 
 
         [FunctionName("UpdateHotel")]
@@ -308,7 +317,59 @@ namespace MohamedRemi_Test
             return new OkResult();
         }
 
-    
-#endregion 
+
+        // Fonction qui récupère le nombre maximal de chambres réservées pour un hôtel donné
+        [FunctionName("GetMaxReservedRooms")]
+        [OpenApiOperation(operationId: "getMaxReservedRooms", tags: new[] { "Hotel" })]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the hotel to retrieve the maximum reserved rooms")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(int), Description = "The maximum number of reserved rooms for the specified hotel")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if no reservations exist for the specified hotel")]
+        [OpenApiSecurity("Bearer",
+                         SecuritySchemeType.Http, Name = "authorization",
+                         Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
+                         BearerFormat = "JWT")]
+        public static async Task<IActionResult> GetMaxReservedRooms(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "Hotel/GetMaxReservedRooms/{id}")] HttpRequest req,
+            string id,
+            ILogger log)
+        {
+            log.LogInformation($"Getting maximum reserved rooms for hotel {id}.");
+
+            try
+            {
+                var reservationsResponse = await ReservationCrud.GetAllReservationsByHotel(req, id, log);
+                if (reservationsResponse is OkObjectResult okResult && okResult.Value is List<Reservation> reservations)
+                {
+                    if (reservations == null || reservations.Count == 0)
+                    {
+                        return new NotFoundResult();
+                    }
+
+                    DateTime currentDate = DateTime.UtcNow;
+                    reservations = reservations.Where(r => r.EndDate >= currentDate).ToList();
+
+                    int maxReservedRooms = reservations.Sum(r => r.NumberOfRoom);
+                    int totalReservations = reservations.Count;
+
+                    var response = new
+                    {
+                        MaxReservedRooms = maxReservedRooms,
+                        TotalReservations = totalReservations
+                    };
+
+                    return new OkObjectResult(response);
+                }
+                else
+                {
+                    return reservationsResponse; // Return the response as is (UnauthorizedResult or StatusCodeResult)
+                }
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "An error occurred while getting maximum reserved rooms.");
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+        #endregion
     }
 }
