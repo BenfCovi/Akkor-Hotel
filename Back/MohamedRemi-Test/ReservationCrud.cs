@@ -34,6 +34,7 @@ namespace MohamedRemi_Test
             public string Id { get; set; }
             public UserCrud.User User { get; set; }
             public HotelCrud.Hotel Hotel { get; set; }
+            public RoomCrud.Room Room { get; set; }
             public int NumberOfPeople { get; set; }
             public DateTime StartDate { get; set; }
             public DateTime EndDate { get; set; }
@@ -61,13 +62,13 @@ namespace MohamedRemi_Test
             }
 
             // Vérifier la capacité de la chambre
-            if (reservation.NumberOfPeople > reservation.Hotel.Capacity)
+            if (reservation.NumberOfPeople > reservation.Room.capacity)
             {
                 return new BadRequestObjectResult("Le nombre de personnes dépasse la capacité maximale de la chambre.");
             }
 
             // Vérification de la disponibilité de la chambre (implémentez cette fonction basée sur la logique fournie précédemment)
-            bool available = await IsRoomAvailable(reservation.Hotel.Id, reservation.StartDate, reservation.EndDate);
+            bool available = await IsRoomAvailable(reservation.Room.Id, reservation.StartDate, reservation.EndDate);
             if (!available)
             {
                 return new BadRequestObjectResult("La chambre n'est pas disponible pour les dates sélectionnées.");
@@ -131,7 +132,7 @@ namespace MohamedRemi_Test
         {
             var filterBuilder = Builders<Reservation>.Filter;
             var filter = filterBuilder.And(
-                filterBuilder.Eq(reservation => reservation.Hotel.Id, roomId),
+                filterBuilder.Eq(reservation => reservation.Room.Id, roomId),
                 filterBuilder.Or(
                     filterBuilder.And(
                         filterBuilder.Lte(reservation => reservation.StartDate, startDate),

@@ -42,6 +42,7 @@ namespace MohamedRemi_Test
             public string PasswordHash { get; set; }
             public string Email { get; set; }
             public UserRole Role { get; set; }
+            public List<int> Hotels { get; set; }
         }
 
         // Définition de l'énumération UserRole
