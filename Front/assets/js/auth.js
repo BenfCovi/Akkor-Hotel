@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateAuthButtons() {
         const userActionsDiv = document.getElementById('userActions');
-        const userToken = localStorage.getItem('userToken');
+        const userToken = localStorage.getItem('token');
 
         if (userToken) {
             // Utilisateur connecté
@@ -44,8 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const logoutButton = document.getElementById('logoutButton');
         if (logoutButton) {
             logoutButton.addEventListener('click', function() {
-                localStorage.removeItem('userToken');
-                window.location.reload();
+                logoutUser();
             });
         }
     }
@@ -69,31 +68,58 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    function registerUser(email, password) {
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        const userExists = users.some(user => user.email === email);
-        if (userExists) {
-            alert('User already exists.');
-            return;
+    async function registerUser(email, password) {
+        try {
+            const createUserResponse = await fetch('http://localhost:7071/api/CreateUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ Email: email, PasswordHash: password }),
+            });
+            if (!createUserResponse.ok) {
+                const errorDetails = await createUserResponse.text();
+                throw new Error(`Registration failed: ${errorDetails}`);
+            }
+            // Authentifier l'utilisateur directement après l'inscription
+            await loginUser(email, password);
+            alert('Registration successful! You are now logged in.');
+            window.location.reload();
+        } catch (error) {
+            console.error('Registration error:', error);
+            alert(`Registration error: ${error.message}`);
         }
-        users.push({ email, password });
-        localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('userToken', JSON.stringify(users));
-        alert('Registration successful. You are now logged in.');
-        $('#modal-signin').modal('hide');
-        window.location.reload();
     }
 
-    function loginUser(email, password) {
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        const user = users.find(user => user.email === email && user.password === password);
-        if (user) {
-            localStorage.setItem('userToken', JSON.stringify(users));
-            alert('Login successful.');
-            $('#modal-login').modal('hide');
+    async function loginUser(email, password) {
+        try {
+            const response = await fetch('http://localhost:7071/api/AuthFunction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: email, password: password }),
+            });
+            if (!response.ok) {
+                const errorDetails = await response.text();
+                throw new Error(`Login failed: ${errorDetails}`);
+            }
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+            alert('Login successful!');
             window.location.reload();
-        } else {
-            alert('Invalid credentials.');
+        } catch (error) {
+            console.error('Login error:', error);
+            alert(`Login error: ${error.message}`);
         }
     }
+      
+
+      function logoutUser() {
+        localStorage.removeItem('token');
+        // Mise à jour de l'UI ou redirection
+        window.location.reload();
+      }
+      
+      
 });
