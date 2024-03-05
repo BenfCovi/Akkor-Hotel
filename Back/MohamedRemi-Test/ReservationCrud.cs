@@ -18,6 +18,7 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using System.Net;
 using static MohamedRemi_Test.HotelCrud;
 using static MohamedRemi_Test.UserCrud;
+using static MohamedRemi_Test.ReservationCrud;
 
 namespace MohamedRemi_Test
 {
@@ -86,6 +87,49 @@ namespace MohamedRemi_Test
             if (reservation == null || string.IsNullOrEmpty(reservation.IdUser) || string.IsNullOrEmpty(reservation.IdHotel))
             {
                 return new BadRequestObjectResult("Hotel data is missing or incorrect.");
+            }
+
+            // Vérification des dates
+            if (reservation.StartDate >= reservation.EndDate)
+            {
+                return new BadRequestObjectResult("The start date must be before the end date.");
+            }
+            //Verification de la disponibilitée des chambres
+            var hotelResponse = await HotelCrud.Get(req, reservation.IdHotel, log);
+            var hotelResult = hotelResponse as OkObjectResult;
+
+            if (hotelResult != null && hotelResult.Value != null)
+            {
+                var hotel = hotelResult.Value as HotelCrud.Hotel;
+                if (hotel != null)
+                {
+                    // Vérification de la disponibilité des chambres
+                    var maxReservedRoomsResponse = await GetMaxReservedRooms(req, reservation.IdHotel, log);
+                    var maxReservedRoomsResult = maxReservedRoomsResponse as OkObjectResult;
+
+                    if (maxReservedRoomsResult != null && maxReservedRoomsResult.Value != null)
+                    {
+                        dynamic maxReservedRoomsValue = maxReservedRoomsResult.Value;
+                        int maxReservedRooms = maxReservedRoomsValue.MaxReservedRooms;
+
+                        if (maxReservedRooms + reservation.NumberOfRoom > hotel.Capacity)
+                        {
+                            return new BadRequestObjectResult("Not enough available rooms for this reservation.");
+                        }
+                    }
+                    else
+                    {
+                        return maxReservedRoomsResponse; // Retourne la réponse telle quelle (UnauthorizedResult ou StatusCodeResult)
+                    }
+                }
+                else
+                {
+                    return new BadRequestObjectResult("Invalid hotel data.");
+                }
+            }
+            else
+            {
+                return hotelResponse; // Retourne la réponse telle quelle (UnauthorizedResult ou StatusCodeResult)
             }
 
             if (reservation.Id != "")
@@ -171,6 +215,49 @@ namespace MohamedRemi_Test
             if (reservationToUpdate == null)
             {
                 return new NotFoundResult();
+            }
+
+            // Vérification des dates
+            if (reservationToUpdate.StartDate >= reservationToUpdate.EndDate)
+            {
+                return new BadRequestObjectResult("The start date must be before the end date.");
+            }
+            //Verification de la disponibilitée des chambres
+            var hotelResponse = await HotelCrud.Get(req, reservationToUpdate.IdHotel, log);
+            var hotelResult = hotelResponse as OkObjectResult;
+
+            if (hotelResult != null && hotelResult.Value != null)
+            {
+                var hotel = hotelResult.Value as HotelCrud.Hotel;
+                if (hotel != null)
+                {
+                    // Vérification de la disponibilité des chambres
+                    var maxReservedRoomsResponse = await GetMaxReservedRooms(req, reservationToUpdate.IdHotel, log);
+                    var maxReservedRoomsResult = maxReservedRoomsResponse as OkObjectResult;
+
+                    if (maxReservedRoomsResult != null && maxReservedRoomsResult.Value != null)
+                    {
+                        dynamic maxReservedRoomsValue = maxReservedRoomsResult.Value;
+                        int maxReservedRooms = maxReservedRoomsValue.MaxReservedRooms;
+
+                        if (maxReservedRooms + reservationToUpdate.NumberOfRoom > hotel.Capacity)
+                        {
+                            return new BadRequestObjectResult("Not enough available rooms for this reservation.");
+                        }
+                    }
+                    else
+                    {
+                        return maxReservedRoomsResponse; // Retourne la réponse telle quelle (UnauthorizedResult ou StatusCodeResult)
+                    }
+                }
+                else
+                {
+                    return new BadRequestObjectResult("Invalid hotel data.");
+                }
+            }
+            else
+            {
+                return hotelResponse; // Retourne la réponse telle quelle (UnauthorizedResult ou StatusCodeResult)
             }
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
@@ -341,7 +428,7 @@ namespace MohamedRemi_Test
 
                 var reservations = await _reservationsCollection.Find(r => r.IdHotel == hotelId).ToListAsync();
 
-                if (reservations == null || reservations.Count == 0)
+                if (reservations == null)
                 {
                     return new NotFoundResult();
                 }

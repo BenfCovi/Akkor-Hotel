@@ -340,7 +340,7 @@ namespace MohamedRemi_Test
                 var reservationsResponse = await ReservationCrud.GetAllReservationsByHotel(req, id, log);
                 if (reservationsResponse is OkObjectResult okResult && okResult.Value is List<Reservation> reservations)
                 {
-                    if (reservations == null || reservations.Count == 0)
+                    if (reservations == null)
                     {
                         return new NotFoundResult();
                     }
