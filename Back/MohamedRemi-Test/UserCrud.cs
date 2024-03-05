@@ -145,6 +145,56 @@ namespace MohamedRemi_Test
             }
         }
 
+        [FunctionName("GetUserByEmail")]
+        [OpenApiOperation(operationId: "GetUserByEmail", tags: new[] { "User" })]
+        [OpenApiParameter(name: "email", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the user to retrieve")]
+        [OpenApiSecurity("Bearer",
+                    SecuritySchemeType.Http, Name = "authorization",
+                    Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
+                    BearerFormat = "JWT")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(User), Description = "The requested user object")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Unauthorized if token is invalid or expired")]
+        public static async Task<IActionResult> GetUserByEmail(
+       [HttpTrigger(AuthorizationLevel.Function, "get", Route = "User/Get/Email/{email}")] HttpRequest req,
+       string email,
+       ILogger log)
+        {
+            log.LogInformation("GetUser function processed a request.");
+            Console.WriteLine(email);
+
+            try
+            {
+                // Token validation
+                string authHeader = req.Headers["Authorization"];
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return new UnauthorizedResult();
+                }
+
+                string token = authHeader.Substring("Bearer ".Length).Trim();
+                if (!ValidateToken(token))
+                {
+                    return new UnauthorizedResult();
+                }
+
+
+                User user = await _usersCollection.Find(u => u.Email == email).FirstOrDefaultAsync();
+
+                if (user == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                // Return the user object
+                return new OkObjectResult(user);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "An error occurred in GetUser function.");
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
 
         [FunctionName("GetAllUsers")]
         [OpenApiOperation(operationId: "getAllUsers", tags: new[] { "User" })]
@@ -322,6 +372,47 @@ namespace MohamedRemi_Test
             }
         }
 
+        [FunctionName("GetUserIdFromToken")]
+        [OpenApiOperation(operationId: "getUserIdFromToken", tags: new[] { "User" }, Summary = "Get user ID from authentication token", Description = "Extracts user ID from the provided authentication token.")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The user ID extracted from the authentication token.")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Bad request if the authentication header is missing or invalid.")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.InternalServerError, Description = "Internal server error if an unexpected error occurs.")]
+        [OpenApiParameter(name: "token", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The Token of the email to retrieve")]
+        [OpenApiSecurity("Bearer",
+                         SecuritySchemeType.Http, Name = "authorization",
+                         Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
+                         BearerFormat = "JWT")]
+        public static IActionResult GetEmailFromToken([HttpTrigger(AuthorizationLevel.Function, "get", Route = "User/GetEmailFromToken/{token}")] HttpRequest req, string token, ILogger log)
+        {
+            log.LogInformation("GetEmailFromToken function processed a request.");
+
+            try
+            {
+                // Récupérer le jeton d'authentification de la requête
+                string authHeader = req.Headers["Authorization"];
+                if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                {
+                    return new BadRequestObjectResult("Authorization header is missing or invalid.");
+                }
+
+                // Appeler la fonction pour extraire l'ID utilisateur du jeton
+                string email = UserCrud.ExtractEmailFromToken(token);
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    return new BadRequestObjectResult("Failed to extract user ID from token.");
+                }
+
+                // Retourner l'ID utilisateur extrait
+                return new OkObjectResult(email);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "An error occurred in GetUserIdFromToken function.");
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
 
         // Fonctions stockées -----------------------------------------------------------------
         private static string HashPassword(string password)
@@ -353,11 +444,22 @@ namespace MohamedRemi_Test
                 return false;
             }
         }
-        private static string ExtractUserIdFromToken(string token)
+        public static string ExtractEmailFromToken(string token)
         {
-            // Extrait l'identifiant de l'utilisateur à partir du token
-            // La logique exacte dépend de la structure de votre token
-            return ""; // Retourner l'ID utilisateur extrait du token
+            try
+            {
+                // Décode le jeton à partir de Base64
+                var decodedBytes = Convert.FromBase64String(token);
+                var decodedEmail = Encoding.UTF8.GetString(decodedBytes);
+
+                return decodedEmail;
+            }
+            catch (Exception ex)
+            {
+                // En cas d'erreur, renvoie null ou gère l'erreur selon vos besoins
+                Console.WriteLine($"Erreur lors de l'extraction de l'e-mail à partir du jeton : {ex.Message}");
+                return null;
+            }
         }
         #endregion
     }
