@@ -14,6 +14,7 @@ using System.Net;
 using Newtonsoft.Json;
 using System.Net.Http;
 using static Microsoft.Azure.Amqp.CbsConstants;
+using System.Text.RegularExpressions;
 
 namespace Test_Unitaire_Back
 {
@@ -103,8 +104,6 @@ namespace Test_Unitaire_Back
             Assert.Equal((int)HttpStatusCode.NotFound, deletedUserResult2.StatusCode);
         }
 
-
-
         [Theory]
         [InlineData("pass", "d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1")] // Test avec un mot de passe simple
         [InlineData("PassWord69008&&", "c82b87eea1d40d488efb79a3c7b6cbf4cbfc8d1a8306c20fb2c63aa3e21dd806")] // Test avec un mot de passe plus complexe
@@ -128,6 +127,27 @@ namespace Test_Unitaire_Back
             string extractedEmail = UserCrud.ExtractEmailFromToken(token);
             // Assert
             Assert.Equal(expectedEmail, extractedEmail);
+        }
+
+        //TEST TDD
+        [Theory]
+        [InlineData("test@example.com", true)] // Email valide
+        [InlineData("invalid_email", false)] // Email invalide
+        [InlineData("another@example.com", true)] // Email valide
+        public void IsValidEmail_ValidAndInvalidEmails_ReturnsExpectedResult(string email, bool expectedResult)
+        {
+            // Act
+            bool isValid = IsValidEmail(email);
+
+            // Assert
+            Assert.Equal(expectedResult, isValid);
+        }
+        public static bool IsValidEmail(string email)
+        {
+            // Utilisation d'une expression régulière pour valider l'email
+            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+            Regex regex = new Regex(pattern);
+            return regex.IsMatch(email);
         }
 
     }

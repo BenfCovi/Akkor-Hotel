@@ -1,0 +1,5 @@
+C:\Users\mohamed.benfrid\OneDrive - ADENES\Bureau\supinfo\Akkor-Hotel\Back\Test-BDD\obj\Debug\net6.0\Test-BDD.csproj.AssemblyReference.cache
+C:\Users\mohamed.benfrid\OneDrive - ADENES\Bureau\supinfo\Akkor-Hotel\Back\Test-BDD\obj\Debug\net6.0\Test-BDD.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mohamed.benfrid\OneDrive - ADENES\Bureau\supinfo\Akkor-Hotel\Back\Test-BDD\obj\Debug\net6.0\Test-BDD.AssemblyInfoInputs.cache
+C:\Users\mohamed.benfrid\OneDrive - ADENES\Bureau\supinfo\Akkor-Hotel\Back\Test-BDD\obj\Debug\net6.0\Test-BDD.AssemblyInfo.cs
+C:\Users\mohamed.benfrid\OneDrive - ADENES\Bureau\supinfo\Akkor-Hotel\Back\Test-BDD\obj\Debug\net6.0\Test-BDD.csproj.CoreCompileInputs.cache
