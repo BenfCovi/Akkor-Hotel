@@ -42,7 +42,7 @@ namespace MohamedRemi_Test
             public string PasswordHash { get; set; }
             public string Email { get; set; }
             public UserRole Role { get; set; }
-            public List<int> Hotels { get; set; }
+            public List<string> Hotels { get; set; }
         }
 
         // Définition de l'énumération UserRole
@@ -359,6 +359,8 @@ namespace MohamedRemi_Test
                 // Update user properties
                 existingUser.Email = updatedUser.Email;
                 existingUser.Role = updatedUser.Role;
+                existingUser.Hotels = updatedUser.Hotels;
+
 
                 // Save updated user to database
                 await _usersCollection.ReplaceOneAsync(u => u.Id == objectId.ToString(), existingUser);
