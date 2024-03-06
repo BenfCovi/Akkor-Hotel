@@ -27,7 +27,12 @@ namespace MohamedRemi_Test
         #region Constructor
         static UserCrud()
         {
-            var client = new MongoClient(Environment.GetEnvironmentVariable("MongoDBConnection"));
+            var connectionString = Environment.GetEnvironmentVariable("MongoDBConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = "mongodb+srv://mimid:prAT82ngffWJmveJ@cluster0.0q9edh4.mongodb.net/";
+            }
+            var client = new MongoClient(connectionString);
             var database = client.GetDatabase("akkorDB");
             _usersCollection = database.GetCollection<User>("users");
         }
@@ -418,7 +423,7 @@ namespace MohamedRemi_Test
 
 
         // Fonctions stockées -----------------------------------------------------------------
-        private static string HashPassword(string password)
+        public static string HashPassword(string password)
         {
             using (var sha256 = SHA256.Create())
             {
