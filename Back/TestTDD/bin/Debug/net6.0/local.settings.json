@@ -1,0 +1,8 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "MongoDBConnection": "mongodb+srv://mimid:prAT82ngffWJmveJ@cluster0.0q9edh4.mongodb.net/",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=myhotelstorage;AccountKey=pIsLCuGsP8wRaVEPglU0l3/+byXyuqbvQEZoqj4RpisTeDeL8ZO1OfSK3YZeyVKxo15oM+k2ePAh+AStArIFTA==;EndpointSuffix=core.windows.net"
+  }
+}
