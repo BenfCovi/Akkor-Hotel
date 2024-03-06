@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.getElementById('loginForm');
     const signinForm = document.getElementById('singinForm');
 
@@ -43,39 +43,41 @@ document.addEventListener('DOMContentLoaded', function() {
     function attachLogoutEvent() {
         const logoutButton = document.getElementById('logoutButton');
         if (logoutButton) {
-            logoutButton.addEventListener('click', function() {
+            logoutButton.addEventListener('click', function () {
                 logoutUser();
             });
         }
     }
-
-    loginForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        loginUser(email, password);
-    });
-
-    signinForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const email = document.getElementById('singinEmail').value;
-        const password = document.getElementById('signinPassword').value;
-        const confirmPassword = document.getElementById('signinConfirmPassword').value;
-        if (password === confirmPassword) {
-            registerUser(email, password);
-        } else {
-            alert("Passwords do not match.");
-        }
-    });
+    if (loginForm) {
+        loginForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            loginUser(email, password);
+        });
+    }
+    if (signinForm) {
+        signinForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const email = document.getElementById('singinEmail').value;
+            const password = document.getElementById('signinPassword').value;
+            const confirmPassword = document.getElementById('signinConfirmPassword').value;
+            if (password === confirmPassword) {
+                registerUser(email, password);
+            } else {
+                alert("Passwords do not match.");
+            }
+        });
+    }
 
     async function registerUser(email, password) {
         try {
-            const createUserResponse = await fetch('http://localhost:7071/api/CreateUser', {
+            const createUserResponse = await fetch('http://localhost:7071/api/User/Create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ Email: email, PasswordHash: password }),
+                body: JSON.stringify({ email: email, passwordHash: password }),
             });
             if (!createUserResponse.ok) {
                 const errorDetails = await createUserResponse.text();
@@ -98,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username: email, password: password }),
+                body: JSON.stringify({ email: email, password: password }),
             });
             if (!response.ok) {
                 const errorDetails = await response.text();
@@ -113,13 +115,13 @@ document.addEventListener('DOMContentLoaded', function() {
             alert(`Login error: ${error.message}`);
         }
     }
-      
 
-      function logoutUser() {
+
+    function logoutUser() {
         localStorage.removeItem('token');
         // Mise à jour de l'UI ou redirection
         window.location.reload();
-      }
-      
-      
+    }
+
+
 });
