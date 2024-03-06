@@ -30,7 +30,7 @@ namespace MohamedRemi_Test
         static HotelCrud()
         {
             var client = new MongoClient(Environment.GetEnvironmentVariable("MongoDBConnection"));
-            var database = client.GetDatabase("SocialMediaDB");
+            var database = client.GetDatabase("akkorDB");
             _hotelsCollection = database.GetCollection<Hotel>("hotels");
         }
         #endregion

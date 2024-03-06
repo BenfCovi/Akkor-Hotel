@@ -27,7 +27,7 @@ namespace MohamedRemi_Test
         static AuthFunction()
         {
             var client = new MongoClient(Environment.GetEnvironmentVariable("MongoDBConnection"));
-            var database = client.GetDatabase("SocialMediaDB");
+            var database = client.GetDatabase("akkorDB");
             _usersCollection = database.GetCollection<User>("users");
         }
 

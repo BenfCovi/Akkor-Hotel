@@ -28,7 +28,7 @@ namespace MohamedRemi_Test
         static ReservationCrud()
         {
             var client = new MongoClient(Environment.GetEnvironmentVariable("MongoDBConnection"));
-            var database = client.GetDatabase("SocialMediaDB");
+            var database = client.GetDatabase("akkorDB");
             _reservationsCollection = database.GetCollection<Reservation>("reservations");
         }
         #endregion

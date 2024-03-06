@@ -28,7 +28,7 @@ namespace MohamedRemi_Test
         static UserCrud()
         {
             var client = new MongoClient(Environment.GetEnvironmentVariable("MongoDBConnection"));
-            var database = client.GetDatabase("SocialMediaDB");
+            var database = client.GetDatabase("akkorDB");
             _usersCollection = database.GetCollection<User>("users");
         }
         #endregion
