@@ -1,0 +1,34 @@
+name: GitHub Actions Verification
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on:
+  push:
+    branches:
+      - main
+      - master
+jobs:
+  Lint-and-Security-Check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run JavaScript Linter (ESLint)
+        run: npx eslint .
+
+      - name: Run CSS Linter (Stylelint)
+        run: npx stylelint "**/*.css"
+
+      - name: Security Check (npm audit)
+        run: npm audit --production
+
+      - name: Echo branch and repository info
+        run: |
+          echo "Branch Name: ${{ github.ref }}"
+          echo "Repository: ${{ github.repository }}"
+
+      - name: List files in the repository
+        run: |
+          ls -lah
+
+      - name: Success message
+        run: echo "All checks passed successfully!"

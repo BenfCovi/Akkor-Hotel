@@ -9,7 +9,7 @@ async function loadHotelsDiscover() {
             createDiscoverSection(hotel, type);
             createModal(hotel, index,type);
         });
-        loadHotelsBest
+        loadHotelsBest();
     } catch (error) {
         console.error('Error loading hotels:', error);
     }
