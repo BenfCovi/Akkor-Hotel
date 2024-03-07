@@ -1,39 +1,44 @@
-async function loadHotelsDiscover() {
-    type="DISCOVER";
-    try {
-        const response = await fetch('http://localhost:7071/api/Hotel/GetLast/8');
-        if (!response.ok) throw new Error('Failed to fetch hotels');
+document.addEventListener('DOMContentLoaded', function () {
+    async function loadHotelsDiscover() {
+        type = "DISCOVER";
+        try {
+            const response = await fetch('http://localhost:7071/api/Hotel/GetLast/8');
+            if (!response.ok) throw new Error('Failed to fetch hotels');
 
-        const hotels = await response.json();
-        hotels.forEach((hotel, index) => {
-            createDiscoverSection(hotel, type);
-            createModal(hotel, index,type);
-        });
-        loadHotelsBest();
-    } catch (error) {
-        console.error('Error loading hotels:', error);
+            const hotels = await response.json();
+            hotels.forEach((hotel, index) => {
+                createDiscoverSection(hotel, type);
+                createModal(hotel, index, type);
+            });
+            loadHotelsBest();
+        } catch (error) {
+            console.error('Error loading hotels:', error);
+        }
     }
-}
 
-async function loadHotelsBest() {
-    type="BEST";
-    try {
-        const response = await fetch('http://localhost:7071/api/Hotel/GetAllBest');
-        if (!response.ok) throw new Error('Failed to fetch hotels');
+    async function loadHotelsBest() {
+        type = "BEST";
+        try {
+            const response = await fetch('http://localhost:7071/api/Hotel/GetAllBest');
+            if (!response.ok) throw new Error('Failed to fetch hotels');
 
-        const hotels = await response.json();
-        hotels.forEach((hotel, index) => {
-            createBestSection(hotel, type);
-            createModal(hotel, index, type);
-        });
-    } catch (error) {
-        console.error('Error loading hotels:', error);
+            const hotels = await response.json();
+            hotels.forEach((hotel, index) => {
+                createBestSection(hotel, type);
+                createModal(hotel, index, type);innerHTML
+            });
+        } catch (error) {
+            console.error('Error loading hotels:', error);
+        }
     }
-}
 
-function createDiscoverSection(hotel,type) {
-    const container = document.getElementById('discoverhotelcontainer');
-    const sectionHTML = `
+    function createDiscoverSection(hotel, type) {
+        const container = document.getElementById('discoverhotelcontainer');
+        if (hotel.pictureList == null) {
+            hotel.pictureList = [];
+            hotel.pictureList[0] = 'assets/img/header-bg.webp';
+        }
+        const sectionHTML = `
         <div class="d-flex" style="min-width: auto; max-width: 275px; margin: 12px;">
             <div class="d-flex justify-content-center align-items-end" data-bss-hover-animate="pulse">
                 <img class="flex-fill" src="${hotel.pictureList[0] || 'assets/img/header-bg.webp'}" style="width: 100%; height: 100%; filter: brightness(75%);" loading="auto">
@@ -42,12 +47,16 @@ function createDiscoverSection(hotel,type) {
             </div>
         </div>
     `;
-    container.innerHTML += sectionHTML;
-}
+        container.innerHTML += sectionHTML;
+    }
 
-function createBestSection(hotel,type) {
-    const container = document.getElementById('besthotelcontainer');
-    const sectionHTML = `
+    function createBestSection(hotel, type) {
+        const container = document.getElementById('besthotelcontainer');
+        if (hotel.pictureList == null) {
+            hotel.pictureList = [];
+            hotel.pictureList[0] = 'assets/img/header-bg.webp';
+        }
+        const sectionHTML = `
         <div class="d-flex" style="min-width: auto; max-width: 275px; margin: 12px;">
             <div class="d-flex justify-content-center align-items-end" data-bss-hover-animate="pulse">
                 <img class="flex-fill" src="${hotel.pictureList[0] || 'assets/img/header-bg.webp'}" style="width: 100%; height: 100%; filter: brightness(75%);" loading="auto">
@@ -56,11 +65,11 @@ function createBestSection(hotel,type) {
             </div>
         </div>
     `;
-    container.innerHTML += sectionHTML;
-}
+        container.innerHTML += sectionHTML;
+    }
 
-function createModal(hotel, index) {
-    const modalHTML = `
+    function createModal(hotel, index) {
+        const modalHTML = `
         <div class="modal fade" role="dialog" tabindex="-1" id="modal-hotel-detail${hotel.id}${type}">
         <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -139,131 +148,132 @@ function createModal(hotel, index) {
     
         </div>
     `;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    const carrouselimg = document.getElementById(`carrouselimg${hotel.id}${type}`);
-    const carrouselindicators = document.getElementById(`carousel-indicators${hotel.id}${type}`);
-    hotel.pictureList.forEach((picture, index) => {
-        const active = index === 0 ? 'active' : '';
-        carrouselimg.innerHTML += `
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        const carrouselimg = document.getElementById(`carrouselimg${hotel.id}${type}`);
+        const carrouselindicators = document.getElementById(`carousel-indicators${hotel.id}${type}`);
+        hotel.pictureList.forEach((picture, index) => {
+            const active = index === 0 ? 'active' : '';
+            carrouselimg.innerHTML += `
             <div class="carousel-item ${active}">
                 <img src="${picture}" class="d-block w-100" alt="...">
             </div>
         `;
-        carrouselindicators.innerHTML += `
+            carrouselindicators.innerHTML += `
             <button type="button" data-bs-target="#carousel-${hotel.id}${type}" data-bs-slide-to="${index}" class="${active}"></button>
         `;
-    });
-    const bookHotelButton = document.getElementById(`bookHotelButton${hotel.id}`);
-    if (bookHotelButton) {
-        bookHotelButton.addEventListener('click', async function () {
-            const dateFrom = document.getElementById(`dateFrom${hotel.id}`).value;
-            const dateTo = document.getElementById(`dateTo${hotel.id}`).value;
-            const numberOfRooms = document.getElementById(`numberOfRooms${hotel.id}`).value;
-
-            if (!dateFrom || !dateTo || !numberOfRooms) {
-                alert('Please fill in all fields.');
-                return;
-            }
-            const token = localStorage.getItem('token');
-            const userId = await getCurrentUserId(token);
-            const hotelId = bookHotelButton.getAttribute('id_hotel');
-
-            if (new Date(dateTo) <= new Date(dateFrom)) {
-                alert("The check-out date must be later than the check-in date.");
-                return;
-            }
-
-            const reservation = { userId, hotelId, dateFrom, dateTo, numberOfRooms };
-
-            sendReservationToAPI(reservation);
         });
-    };
+        const bookHotelButton = document.getElementById(`bookHotelButton${hotel.id}`);
+        if (bookHotelButton) {
+            bookHotelButton.addEventListener('click', async function () {
+                const dateFrom = document.getElementById(`dateFrom${hotel.id}`).value;
+                const dateTo = document.getElementById(`dateTo${hotel.id}`).value;
+                const numberOfRooms = document.getElementById(`numberOfRooms${hotel.id}`).value;
 
-    function sendReservationToAPI(inforeservation) {
-
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert('Please log in to make a reservation.');
-            return;
-        }
-
-        const reservation = {
-            idUser: inforeservation.userId,
-            idHotel: inforeservation.hotelId,
-            startDate: inforeservation.dateFrom,
-            endDate: inforeservation.dateTo,
-            pictureList: inforeservation.pictureList,
-            numberOfRoom: inforeservation.numberOfRooms
-        };
-        console.log('Reservation:', reservation);
-
-        fetch('http://localhost:7071/api/Reservation/Create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(reservation),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                if (!dateFrom || !dateTo || !numberOfRooms) {
+                    alert('Please fill in all fields.');
+                    return;
                 }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Success:', data);
-                alert('Reservation saved successfully!');
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                alert('An error occurred while saving the reservation.');
+                const token = localStorage.getItem('token');
+                const userId = await getCurrentUserId(token);
+                const hotelId = bookHotelButton.getAttribute('id_hotel');
+
+                if (new Date(dateTo) <= new Date(dateFrom)) {
+                    alert("The check-out date must be later than the check-in date.");
+                    return;
+                }
+
+                const reservation = { userId, hotelId, dateFrom, dateTo, numberOfRooms };
+
+                sendReservationToAPI(reservation);
             });
-    }
-}
+        };
 
-async function getCurrentUserEmail(token) {
-    try {
-        const response = await fetch(`http://localhost:7071/api/User/GetEmailFromToken/${token}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
+        function sendReservationToAPI(inforeservation) {
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please log in to make a reservation.');
+                return;
             }
-        });
-        if (!response.ok) {
-            throw new Error('Failed to fetch user profile');
-        }
-        const email = await response.text(); // Correctly awaits the text value
-        return email;
-        // Use the email value as needed here
-    } catch (error) {
-        console.error('Error fetching user profile:', error);
-    }
-}
 
-async function getCurrentUserId(token) {
-    email = await getCurrentUserEmail(token);
-    try {
-        const response = await fetch(`http://localhost:7071/api/User/Get/Email/${encodeURIComponent(email)}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
+            const reservation = {
+                idUser: inforeservation.userId,
+                idHotel: inforeservation.hotelId,
+                startDate: inforeservation.dateFrom,
+                endDate: inforeservation.dateTo,
+                pictureList: inforeservation.pictureList,
+                numberOfRoom: inforeservation.numberOfRooms
+            };
+            console.log('Reservation:', reservation);
+
+            fetch('http://localhost:7071/api/Reservation/Create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(reservation),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Reservation saved successfully!');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('An error occurred while saving the reservation.');
+                });
+        }
+    }
+
+    async function getCurrentUserEmail(token) {
+        try {
+            const response = await fetch(`http://localhost:7071/api/User/GetEmailFromToken/${token}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch user profile');
             }
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch user profile');
+            const email = await response.text(); // Correctly awaits the text value
+            return email;
+            // Use the email value as needed here
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
         }
-
-        const data = await response.json();
-        return data.id;
-
-    } catch (error) {
-        console.error('Error fetching user profile:', error);
     }
-}
+
+    async function getCurrentUserId(token) {
+        email = await getCurrentUserEmail(token);
+        try {
+            const response = await fetch(`http://localhost:7071/api/User/Get/Email/${encodeURIComponent(email)}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch user profile');
+            }
+
+            const data = await response.json();
+            return data.id;
+
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+        }
+    }
 
 
 
-loadHotelsDiscover();
+    loadHotelsDiscover();
 
+});

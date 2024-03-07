@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const userEmail = await getCurrentUserEmail(token);
         const userId = await getCurrentUserId(userEmail, token);
+        const userHotel = await getCurrentUserHotel(userEmail, token);
         try {
             const response = await fetch(`http://localhost:7071/api/User/Delete/${userId}`, {
                 method: 'DELETE',
@@ -171,6 +172,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
         } catch (error) {
             console.error('Error fetching user profile:', error);
+        }
+    }
+
+    async function getCurrentUserHotel(email, token) {
+        try {
+            const response = await fetch(`http://localhost:7071/api/User/Get/Email/${encodeURIComponent(email)}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch user profile');
+            }
+
+            const data = await response.json();
+            if(data.Hotels != []) deleteHotel(userHotel.id, token);
+            return;
+
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+        }
+    }
+
+    async function deleteHotel(hotelid, token) {
+        try {
+            const userDataResponse = await fetch(`http://localhost:7071/api/Hotel/Delete/${hotelid}`, {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const userData = await userDataResponse.json();
+            return;
+        } catch (error) {
+            console.error('Error fetching user data:', error);
         }
     }
 });

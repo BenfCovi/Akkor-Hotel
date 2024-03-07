@@ -1,0 +1,153 @@
+import time
+import random
+import os
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.common.action_chains import ActionChains
+random_number = random.randint(10000000, 99999999)
+
+Email = str(random_number)+"@gmail.com"
+NewEmail = str(random_number+1)+"@gmail.com"
+Password = "str(random_number)"
+
+HotelName = "Hotel "+str(random_number)
+HotelLocation = "Location "+str(random_number)
+HotelPicture = r"e:\COURS\4CITE\Akkor Hotel\Akkor-Hotel\Front\assets\img\logoAkkor.png"
+HotelDescription = "Description "+str(random_number)
+HotelCapacity = str(random.randint(10, 99))
+HotelStars = str(random_number)
+
+DateStart = "18062024"
+DataEnd = "23062024"
+RoomNumber = str(random.randint(1, 9))
+
+driver = webdriver.Chrome()
+# driver.execute_script("window.sessionStorage.clear();")
+
+driver.get("http://127.0.0.1:5500/index.html")
+
+time.sleep(2)
+
+# Create new account
+driver.find_element(By.XPATH, '//*[@id="userActions"]/button[1]').click()
+time.sleep(1)
+text_area = driver.find_element(By.XPATH, '//*[@id="singinEmail"]')
+text_area.clear()
+text_area.send_keys(Email)
+text_area = driver.find_element(By.XPATH, '//*[@id="signinPassword"]')
+text_area.clear()
+text_area.send_keys(Password)
+text_area = driver.find_element(By.XPATH, '//*[@id="signinConfirmPassword"]')
+text_area.clear()
+text_area.send_keys(Password)
+driver.find_element(By.XPATH, '//*[@id="singinButton"]').click()
+# Validate alerte
+time.sleep(2)
+alert = driver.switch_to.alert
+assert "Login successful!" in alert.text
+alert.accept()
+time.sleep(2)
+alert = driver.switch_to.alert
+assert "Registration successful! You are now logged in." in alert.text
+alert.accept()
+time.sleep(1)
+
+# Go to profil
+driver.find_element(By.XPATH, '//*[@id="userActions"]/a[2]').click()
+time.sleep(1)
+
+# Go to add busness
+driver.find_element(By.XPATH, '/html/body/section/div[1]/a').click()
+time.sleep(1)
+
+# Add busness data
+text_area = driver.find_element(By.XPATH, '//*[@id="hotelName"]')
+text_area.clear()
+text_area.send_keys(HotelName)
+text_area = driver.find_element(By.XPATH, '//*[@id="hotelLocation"]')
+text_area.clear()
+text_area.send_keys(HotelLocation)
+text_area = driver.find_element(By.XPATH, '//*[@id="hotelDescription"]')
+text_area.clear()
+text_area.send_keys(HotelDescription)
+text_area = driver.find_element(By.XPATH, '//*[@id="hotelPicture"]')
+text_area.clear()
+text_area.send_keys(HotelPicture)
+text_area = driver.find_element(By.XPATH, '//*[@id="numberOfRooms"]')
+text_area.clear()
+text_area.send_keys(HotelCapacity)
+text_area = driver.find_element(By.XPATH, '//*[@id="hotelStars"]')
+text_area.clear()
+text_area.send_keys(HotelStars)
+button = driver.find_element(By.XPATH, '//*[@id="createHotelBtn"]')
+ActionChains(driver).move_to_element(button).click(button).perform()
+# Validate alerte
+time.sleep(2)
+alert = driver.switch_to.alert
+assert "Hotel created successfully" in alert.text
+alert.accept()
+time.sleep(2)
+alert = driver.switch_to.alert
+assert "User status updated successfully" in alert.text
+alert.accept()
+time.sleep(1)
+
+# Connect to account
+driver.find_element(By.XPATH, '//*[@id="userActions"]/button[2]').click()
+time.sleep(1)
+text_area = driver.find_element(By.XPATH, '//*[@id="loginEmail"]')
+text_area.clear()
+text_area.send_keys(Email)
+text_area = driver.find_element(By.XPATH, '//*[@id="loginPassword"]')
+text_area.clear()
+text_area.send_keys(Password)
+driver.find_element(By.XPATH, '//*[@id="loginButton"]').click()
+time.sleep(1)
+# Validate alerte
+time.sleep(2)
+alert = driver.switch_to.alert
+assert "Login successful!" in alert.text
+alert.accept()
+time.sleep(1)
+
+# Make reservation
+button = driver.find_element(By.XPATH, '/html/body/div[5]/div[2]/div[1]/div/button')
+ActionChains(driver).move_to_element(button).click(button).perform()
+time.sleep(1)
+text_area = driver.find_element(By.XPATH, '/html/body/div[10]/div/div/div[4]/form/div[1]/div/input[1]')
+text_area.clear()
+text_area.send_keys(DateStart)
+text_area = driver.find_element(By.XPATH, '/html/body/div[10]/div/div/div[4]/form/div[1]/div/input[2]')
+text_area.clear()
+text_area.send_keys(DataEnd)
+text_area = driver.find_element(By.XPATH, '/html/body/div[10]/div/div/div[4]/form/div[2]/input')
+text_area.clear()
+text_area.send_keys(RoomNumber)
+time.sleep(2)
+button = driver.find_element(By.XPATH, '/html/body/div[10]/div/div/div[4]/form/button')
+ActionChains(driver).move_to_element(button).click(button).perform()
+# Validate alerte
+time.sleep(2)
+alert = driver.switch_to.alert
+assert "Reservation saved successfully!" in alert.text
+alert.accept()
+time.sleep(1)
+
+# Go to profil
+button = driver.find_element(By.XPATH, '/html/body/div[10]/div/div/div[1]/button')
+ActionChains(driver).move_to_element(button).click(button).perform()
+time.sleep(1)
+button = driver.find_element(By.XPATH, '//*[@id="userActions"]/a[2]')
+ActionChains(driver).move_to_element(button).click(button).perform()
+time.sleep(1)
+
+# Remove account
+button = driver.find_element(By.XPATH, '//*[@id="deleteAccountButton"]')
+ActionChains(driver).move_to_element(button).click(button).perform()
+time.sleep(1)
+alert = driver.switch_to.alert
+alert.accept()
+
+# Finish
+driver.quit()

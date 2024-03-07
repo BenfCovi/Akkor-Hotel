@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             } else {
                 document.getElementById('formcreatebusiness').innerHTML = '';
                 document.getElementById('formcreatebusiness').style.display = 'None';
-                setData(userData.hotelId, token);
+                setData(userData.hotels[0], token);
                 await updateValueForm(userId, token);
             }
         } catch (error) {
@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const hotelData = await hotelDataResponse.json();
+        document.getElementById('formeditbusiness').id_hotel = hotelData.id;
         document.getElementById('hotelName').value = hotelData.name;
         document.getElementById('hotelLocation').value = hotelData.location;
         document.getElementById('hotelDescription').value = hotelData.description;
@@ -209,7 +210,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     updateButtons.addEventListener('click', async function () {
             const hotelData = {
-                id: document.getElementById('formeditbusiness').id_hotel.value,
+                id: document.getElementById('formeditbusiness').id_hotel,
                 name: document.getElementById('hotelName').value,
                 location: document.getElementById('hotelLocation').value,
                 description: document.getElementById('hotelDescription').value,

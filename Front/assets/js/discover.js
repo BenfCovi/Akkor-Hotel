@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function createDiscoverSection(hotel) {
         const container = document.getElementById('discovercontainer');
+        if (hotel.pictureList == null) {
+            hotel.pictureList = []; 
+            hotel.pictureList[0] = 'assets/img/header-bg.webp';
+        }
         const sectionHTML = `
         <div class="d-flex" style="min-width: auto; max-width: 275px; margin: 12px;">
             <div class="d-flex justify-content-center align-items-end" data-bss-hover-animate="pulse">
