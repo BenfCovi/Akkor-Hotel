@@ -7,11 +7,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 random_number = random.randint(10000000, 99999999)
 
 Email = str(random_number)+"@gmail.com"
-NewEmail = str(random_number+1)+"@gmail.com"
 Password = str(random_number)
+PasswordFail = str(random_number+1)
 
 driver = webdriver.Chrome()
-# driver.execute_script("window.sessionStorage.clear();")
 
 driver.get("http://127.0.0.1:5500/index.html")
 
@@ -41,20 +40,27 @@ assert "Registration successful! You are now logged in." in alert.text
 alert.accept()
 time.sleep(1)
 
-# Go to profil
-driver.find_element(By.XPATH, '//*[@id="userActions"]/a[2]').click()
-time.sleep(1)
+# Disconnect
+driver.find_element(By.XPATH, '//*[@id="logoutButton"]').click()
+time.sleep(2)
 
-# Update profil
-text_area = driver.find_element(By.XPATH, '//*[@id="emailInput"]')
+# Connect to account with wrong password
+driver.find_element(By.XPATH, '//*[@id="userActions"]/button[2]').click()
+time.sleep(1)
+text_area = driver.find_element(By.XPATH, '//*[@id="loginEmail"]')
 text_area.clear()
-text_area.send_keys(NewEmail)
-driver.find_element(By.XPATH, '//*[@id="changeEmailButton"]').click()
+text_area.send_keys(Email)
+text_area = driver.find_element(By.XPATH, '//*[@id="loginPassword"]')
+text_area.clear()
+text_area.send_keys(PasswordFail)
+driver.find_element(By.XPATH, '//*[@id="loginButton"]').click()
 # Validate alerte
 time.sleep(2)
 alert = driver.switch_to.alert
-assert "Your profile has been updated. Please log in again." in alert.text
+assert "Login error: Login failed:" in alert.text
 alert.accept()
+time.sleep(1)
+driver.find_element(By.XPATH, '//*[@id="modal-login"]/div/div/div[1]/button').click()
 time.sleep(1)
 
 # Connect to account
@@ -62,18 +68,17 @@ driver.find_element(By.XPATH, '//*[@id="userActions"]/button[2]').click()
 time.sleep(1)
 text_area = driver.find_element(By.XPATH, '//*[@id="loginEmail"]')
 text_area.clear()
-text_area.send_keys(NewEmail)
+text_area.send_keys(Email)
 text_area = driver.find_element(By.XPATH, '//*[@id="loginPassword"]')
 text_area.clear()
 text_area.send_keys(Password)
 driver.find_element(By.XPATH, '//*[@id="loginButton"]').click()
-time.sleep(1)
 # Validate alerte
 time.sleep(2)
 alert = driver.switch_to.alert
 assert "Login successful!" in alert.text
 alert.accept()
-time.sleep(2)
+time.sleep(1)
 
 # Go to profil
 driver.find_element(By.XPATH, '//*[@id="userActions"]/a[2]').click()

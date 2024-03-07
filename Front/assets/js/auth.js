@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function attachLoginSinginEvent() {
+        $(document).ready(async function() {
         const loginButton = await document.getElementById('loginButton');
         console.log(loginButton);
 
@@ -76,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert("Passwords do not match.");
                 }
             });
+        });
 
     }
 

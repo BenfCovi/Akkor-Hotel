@@ -11,7 +11,8 @@ from selenium.webdriver.chrome.options import Options
 random_number = random.randint(10000000, 99999999)
 
 Email = str(random_number)+"@gmail.com"
-Password = "str(random_number)"
+Password = str(random_number)
+PasswordFail = str(random_number+1)
 
 driver = webdriver.Chrome()
 
@@ -30,29 +31,14 @@ text_area.clear()
 text_area.send_keys(Password)
 text_area = driver.find_element(By.XPATH, '//*[@id="signinConfirmPassword"]')
 text_area.clear()
-text_area.send_keys(Password+1)
+text_area.send_keys(PasswordFail)
 driver.find_element(By.XPATH, '//*[@id="singinButton"]').click()
 # Validate alerte
 time.sleep(2)
 alert = driver.switch_to.alert
-assert "Login successful!" in alert.text
+assert "Passwords do not match." in alert.text
 alert.accept()
 time.sleep(2)
-alert = driver.switch_to.alert
-assert "Registration successful! You are now logged in." in alert.text
-alert.accept()
-time.sleep(1)
-
-# Go to profil
-driver.find_element(By.XPATH, '//*[@id="userActions"]/a[2]').click()
-time.sleep(1)
-
-# Remove account
-button = driver.find_element(By.XPATH, '//*[@id="deleteAccountButton"]')
-ActionChains(driver).move_to_element(button).click(button).perform()
-time.sleep(1)
-alert = driver.switch_to.alert
-alert.accept()
 
 # Finish
 driver.quit()

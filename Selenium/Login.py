@@ -7,7 +7,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 random_number = random.randint(10000000, 99999999)
 
 Email = str(random_number)+"@gmail.com"
-Password = "str(random_number)"
+Password = str(random_number)
 
 driver = webdriver.Chrome()
 

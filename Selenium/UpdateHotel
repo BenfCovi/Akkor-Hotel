@@ -9,7 +9,7 @@ random_number = random.randint(10000000, 99999999)
 
 Email = str(random_number)+"@gmail.com"
 NewEmail = str(random_number+1)+"@gmail.com"
-Password = "str(random_number)"
+Password = str(random_number)
 
 HotelName = "Hotel "+str(random_number)
 HotelLocation = "Location "+str(random_number)
