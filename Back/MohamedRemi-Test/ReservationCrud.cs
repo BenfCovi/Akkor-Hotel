@@ -57,7 +57,7 @@ namespace MohamedRemi_Test
 
         // FONCTION CreateReservation (CRUD)
         [FunctionName("CreateReservation")]
-        [OpenApiOperation(operationId: "createReservation", tags: new[] { "Reservation" })]
+        [OpenApiOperation(operationId: "createReservation", tags: new[] { "Reservation" }, Summary = "Create a reservation")]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(Reservation), Required = true, Description = "Reservation creation request object")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.Created, contentType: "application/json", bodyType: typeof(Reservation), Description = "The created reservation object")]
         [OpenApiSecurity("Bearer",
@@ -147,7 +147,7 @@ namespace MohamedRemi_Test
 
         // FONCTION GetReservationById (CRUD)
         [FunctionName("GetReservationById")]
-        [OpenApiOperation(operationId: "getReservationById", tags: new[] { "Reservation" })]
+        [OpenApiOperation(operationId: "getReservationById", tags: new[] { "Reservation" }, Summary = "Get a reservation with your ID")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the reservation to retrieve")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Reservation), Description = "The requested reservation object")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if the reservation with the specified ID does not exist")]
@@ -184,7 +184,7 @@ namespace MohamedRemi_Test
 
         // FONCTION UpdateReservation (CRUD)
         [FunctionName("UpdateReservation")]
-        [OpenApiOperation(operationId: "updateReservation", tags: new[] { "Reservation" })]
+        [OpenApiOperation(operationId: "updateReservation", tags: new[] { "Reservation" }, Summary = "Update a reservation")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the reservation to update")]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(Reservation), Required = true, Description = "Reservation update request object")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Reservation), Description = "The updated reservation object")]
@@ -271,7 +271,7 @@ namespace MohamedRemi_Test
 
         // FONCTION DeleteReservation (CRUD)
         [FunctionName("DeleteReservation")]
-        [OpenApiOperation(operationId: "deleteReservation", tags: new[] { "Reservation" })]
+        [OpenApiOperation(operationId: "deleteReservation", tags: new[] { "Reservation" }, Summary = "Delete a reservation with its id")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the reservation to delete")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "OK if the reservation is successfully deleted")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if the reservation with the specified ID does not exist")]
@@ -308,7 +308,7 @@ namespace MohamedRemi_Test
 
         // FONCTION GetAllRestervations (qui recupere tout les Reservations) (BEARER AUTHORISATION)
         [FunctionName("GetAllReservations")]
-        [OpenApiOperation(operationId: "getAllReservations", tags: new[] { "Reservation" })]
+        [OpenApiOperation(operationId: "getAllReservations", tags: new[] { "Reservation" }, Summary = "Get all reservations")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<Reservation>), Description = "The list of all reservations")]
         [OpenApiSecurity("Bearer",
                          SecuritySchemeType.Http, Name = "authorization",
@@ -353,7 +353,7 @@ namespace MohamedRemi_Test
 
         // FONCTION GetAllReservationsByUser (qui recupere tout les Reservations d'un utilisateur) (BEARER AUTHORISATION)
         [FunctionName("GetAllReservationsByUser")]
-        [OpenApiOperation(operationId: "getAllReservationsByUser", tags: new[] { "Reservation" })]
+        [OpenApiOperation(operationId: "getAllReservationsByUser", tags: new[] { "Reservation" }, Summary = "Get all reservations that are taken by a user")]
         [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the user")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<Reservation>), Description = "The list of reservations made by the user")]
         [OpenApiSecurity("Bearer",
@@ -399,7 +399,7 @@ namespace MohamedRemi_Test
 
         // FONCTION GetAllReservationsByHotel (qui recupere tout les Reservations d'un Hotel)  (BEARER AUTHORISATION)
         [FunctionName("GetAllReservationsByHotel")]
-        [OpenApiOperation(operationId: "getAllReservationsByHotel", tags: new[] { "Reservation" })]
+        [OpenApiOperation(operationId: "getAllReservationsByHotel", tags: new[] { "Reservation" }, Summary = "Get all hotel reservations")]
         [OpenApiParameter(name: "hotelId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the hotel")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<Reservation>), Description = "The list of reservations made for the hotel")]
         [OpenApiSecurity("Bearer",

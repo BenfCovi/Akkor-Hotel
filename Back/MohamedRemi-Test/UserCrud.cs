@@ -66,7 +66,7 @@ namespace MohamedRemi_Test
         #region Fonctions
 
         [FunctionName("CreateUser")]
-        [OpenApiOperation(operationId: "createUser", tags: new[] { "User" })]
+        [OpenApiOperation(operationId: "createUser", tags: new[] { "User" }, Summary = "Create a user")]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(User), Required = true, Description = "User creation request object")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.Created, contentType: "application/json", bodyType: typeof(User), Description = "The created user object, ID will be generated automatically")]
         public static async Task<IActionResult> Post([HttpTrigger(AuthorizationLevel.Function, "post", Route = "User/Create")] HttpRequest req, ILogger log)
@@ -95,7 +95,7 @@ namespace MohamedRemi_Test
         }
 
         [FunctionName("GetUser")]
-        [OpenApiOperation(operationId: "getUser", tags: new[] { "User" })]
+        [OpenApiOperation(operationId: "getUser", tags: new[] { "User" }, Summary = "Get a user with their id")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the user to retrieve")]
         [OpenApiSecurity("Bearer",
                          SecuritySchemeType.Http, Name = "authorization",
@@ -152,7 +152,7 @@ namespace MohamedRemi_Test
         }
 
         [FunctionName("GetUserByEmail")]
-        [OpenApiOperation(operationId: "GetUserByEmail", tags: new[] { "User" })]
+        [OpenApiOperation(operationId: "GetUserByEmail", tags: new[] { "User" }, Summary = "Get a user with their email")]
         [OpenApiParameter(name: "email", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the user to retrieve")]
         [OpenApiSecurity("Bearer",
                     SecuritySchemeType.Http, Name = "authorization",
@@ -203,7 +203,7 @@ namespace MohamedRemi_Test
 
 
         [FunctionName("GetAllUsers")]
-        [OpenApiOperation(operationId: "getAllUsers", tags: new[] { "User" })]
+        [OpenApiOperation(operationId: "getAllUsers", tags: new[] { "User" }, Summary = "Get all users")]
         [OpenApiSecurity("Bearer",
                      SecuritySchemeType.Http, Name = "authorization",
                      Scheme = OpenApiSecuritySchemeType.Bearer, In = OpenApiSecurityLocationType.Header,
@@ -250,7 +250,7 @@ namespace MohamedRemi_Test
 
 
         [FunctionName("DeleteUser")]
-        [OpenApiOperation(operationId: "deleteUser", tags: new[] { "User" })]
+        [OpenApiOperation(operationId: "deleteUser", tags: new[] { "User" }, Summary = "Delete user with an id")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the user to retrieve")]
         [OpenApiSecurity("Bearer",
                      SecuritySchemeType.Http, Name = "authorization",
@@ -307,7 +307,7 @@ namespace MohamedRemi_Test
         }
 
         [FunctionName("UpdateUser")]
-        [OpenApiOperation(operationId: "updateUser", tags: new[] { "User" })]
+        [OpenApiOperation(operationId: "updateUser", tags: new[] { "User" }, Summary = "Update a user with an id")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the user to retrieve")]
         [OpenApiSecurity("Bearer",
                          SecuritySchemeType.Http, Name = "authorization",

@@ -32,7 +32,7 @@ namespace MohamedRemi_Test
         }
 
         [FunctionName("AuthFunction")]
-        [OpenApiOperation(operationId: "authenticateUser", tags: new[] { "User Authentication" })]
+        [OpenApiOperation(operationId: "authenticateUser", tags: new[] { "User Authentication" }, Summary = "Allows the authentication of a user and returns a Token")]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(AuthRequest), Required = true, Description = "User authentication request")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(AuthResponse), Description = "The authentication token if authentication is successful")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request, missing username or password")]
