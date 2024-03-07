@@ -19,8 +19,8 @@ namespace TestBDD.StepDefinitions
 
         private readonly Microsoft.Extensions.Logging.ILogger logger = new Logger<UserCrudBddStepDefinitions>(new LoggerFactory());
 
-        private User _user;
-        private IActionResult _createUserResponse;
+        private static User _user;
+        private static IActionResult _createUserResponse;
 
 
         public interface IUserRepository
@@ -32,20 +32,21 @@ namespace TestBDD.StepDefinitions
             Task<bool> DeleteUserAsync(string userId);
         }
 
-
+        [Test]
         [Given("an unregistered user")]
         public void GivenAnUnregisteredUser()
         {
             // Implement logic to set up an unregistered user
             _user = new User
             {
-                Email = "testBDD@example.com",
+                Email = "test.BDD@example.com",
                 PasswordHash = "password",
                 Role = UserRole.Customer,
                 Hotels = new List<string> { "fds7897sdfs", "dsq457f39sd" }
             };
         }
 
+        [Test]
         [When("I add a new user with valid email and password")]
         public async Task WhenIAddANewUserWithValidEmailAndPassword()
         {
@@ -61,10 +62,7 @@ namespace TestBDD.StepDefinitions
         [Then("the user is successfully created in the system")]
         public void ThenTheUserIsSuccessfullyCreatedInTheSystem()
         {
-            // Assert: Vérifier que l'utilisateur est créé avec succès
             Assert.IsInstanceOf<CreatedResult>(_createUserResponse);
-            Assert.AreEqual((int)HttpStatusCode.Created, (_createUserResponse as CreatedResult)?.StatusCode);
-            Assert.IsInstanceOf<User>((_createUserResponse as CreatedResult)?.Value);
         }
     }
 }

@@ -27,7 +27,12 @@ namespace MohamedRemi_Test
         #region Constructor
         static ReservationCrud()
         {
-            var client = new MongoClient(Environment.GetEnvironmentVariable("MongoDBConnection"));
+            var connectionString = Environment.GetEnvironmentVariable("MongoDBConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = "mongodb+srv://mimid:prAT82ngffWJmveJ@cluster0.0q9edh4.mongodb.net/";
+            }
+            var client = new MongoClient(connectionString);
             var database = client.GetDatabase("akkorDB");
             _reservationsCollection = database.GetCollection<Reservation>("reservations");
         }
