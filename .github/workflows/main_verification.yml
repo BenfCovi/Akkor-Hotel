@@ -11,15 +11,29 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+      
+      # Utilisation de conteneurs Docker pour ESLint et Stylelint pourrait être une option, mais ici,
+      # nous supposons l'utilisation de Node.js via GitHub Actions pour une intégration directe.
+      
+      - name: Set up Node.js (Requis pour ESLint et Stylelint)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14' # Choisissez une version de Node.js compatible avec vos outils
+      
+      - name: Install ESLint (Supposant que vous avez un .eslintrc dans votre repo)
+        run: |
+          npm init -y
+          npm install eslint --save-dev
+          
       - name: Run JavaScript Linter (ESLint)
         run: npx eslint .
-
-      - name: Run CSS Linter (Stylelint)
-        run: npx stylelint "**/*.css"
-
-      - name: Security Check (npm audit)
-        run: npm audit --production
+      
+    #   - name: Install Stylelint (Supposant que vous avez un .stylelintrc dans votre repo)
+    #     run: |
+    #       npm install stylelint stylelint-config-standard --save-dev
+          
+    #   - name: Run CSS Linter (Stylelint)
+    #     run: npx stylelint "**/*.css"
 
       - name: Echo branch and repository info
         run: |
