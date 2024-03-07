@@ -60,7 +60,7 @@ namespace MohamedRemi_Test
         #region Fonctions
 
         [FunctionName("CreateHotel")]
-        [OpenApiOperation(operationId: "createHotel", tags: new[] { "Hotel" })]
+        [OpenApiOperation(operationId: "createHotel", tags: new[] { "Hotel" }, Summary = "Create a hotel")]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(Hotel), Required = true, Description = "Hotel creation request object")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Hotel), Description = "The created hotel object, ID will be generated automatically")]
         [OpenApiSecurity("Bearer",
@@ -107,7 +107,7 @@ namespace MohamedRemi_Test
         }
 
         [FunctionName("GetHotel")]
-        [OpenApiOperation(operationId: "getHotel", tags: new[] { "Hotel" })]
+        [OpenApiOperation(operationId: "getHotel", tags: new[] { "Hotel" }, Summary = "Get a hotel with your id")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the hotel to retrieve")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Hotel), Description = "The requested hotel object")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if the hotel with the specified ID does not exist")]
@@ -147,7 +147,7 @@ namespace MohamedRemi_Test
 
         //GetAllHotels (Récuperation de tout les hotels)
         [FunctionName("GetAllHotels")]
-        [OpenApiOperation(operationId: "getAllHotels", tags: new[] { "Hotel" })]
+        [OpenApiOperation(operationId: "getAllHotels", tags: new[] { "Hotel" }, Summary = "Get all hotels")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<Hotel>), Description = "The list of all hotels")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if no hotels exist")]
         public static async Task<IActionResult> GetAllHotels(
@@ -176,7 +176,7 @@ namespace MohamedRemi_Test
 
         //GetLastHotels (récupère les derniers hôtels inscrits dans la base MongoDB)
         [FunctionName("GetLastHotels")]
-        [OpenApiOperation(operationId: "getLastHotels", tags: new[] { "Hotel" })]
+        [OpenApiOperation(operationId: "getLastHotels", tags: new[] { "Hotel" }, Summary = "Get all the latest hotels added based on the number one needs to receive")]
         [OpenApiParameter(name: "count", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The maximum number of hotels to retrieve")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<Hotel>), Description = "The list of last hotels")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if no hotels exist")]
@@ -212,7 +212,7 @@ namespace MohamedRemi_Test
 
         //GetBestHotels (renvoi la liste des hotels qui ont l'attribue "stars" égale a 4 ou 5)
         [FunctionName("GetBestHotels")]
-        [OpenApiOperation(operationId: "getBestHotels", tags: new[] { "Hotel" })]
+        [OpenApiOperation(operationId: "getBestHotels", tags: new[] { "Hotel" }, Summary = "Get all hotels that have 4 or 5 stars")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<Hotel>), Description = "The list of best hotels")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if no hotels with 4 or 5 stars exist")]
         public static async Task<IActionResult> GetBestHotels(
@@ -241,7 +241,7 @@ namespace MohamedRemi_Test
 
 
         [FunctionName("UpdateHotel")]
-        [OpenApiOperation(operationId: "updateHotel", tags: new[] { "Hotel" })]
+        [OpenApiOperation(operationId: "updateHotel", tags: new[] { "Hotel" }, Summary = "Update a Hotel")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the hotel to update")]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(Hotel), Required = true, Description = "Hotel update request object")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Hotel), Description = "The updated hotel object")]
@@ -283,7 +283,7 @@ namespace MohamedRemi_Test
         }
 
         [FunctionName("DeleteHotel")]
-        [OpenApiOperation(operationId: "deleteHotel", tags: new[] { "Hotel" })]
+        [OpenApiOperation(operationId: "deleteHotel", tags: new[] { "Hotel" }, Summary = "Delete a hotel with its id")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the hotel to delete")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "OK if the hotel is successfully deleted")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if the hotel with the specified ID does not exist")]
@@ -320,7 +320,7 @@ namespace MohamedRemi_Test
 
         // Fonction qui récupère le nombre maximal de chambres réservées pour un hôtel donné
         [FunctionName("GetMaxReservedRooms")]
-        [OpenApiOperation(operationId: "getMaxReservedRooms", tags: new[] { "Hotel" })]
+        [OpenApiOperation(operationId: "getMaxReservedRooms", tags: new[] { "Hotel" }, Summary = "Get the total number of rooms reserved for a hotel")]
         [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The ID of the hotel to retrieve the maximum reserved rooms")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(int), Description = "The maximum number of reserved rooms for the specified hotel")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found if no reservations exist for the specified hotel")]
