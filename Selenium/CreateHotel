@@ -22,12 +22,12 @@ HotelStars = str(random_number)
 # NewEmail = str(random_number+1)+"@dmin.com"
 # Password = str(random_number)
 
-# HotelName = "The Cosmopolitan Lodge"
-# HotelLocation = "Londres, Royaume-Uni"
-# HotelPicture = r"C:\Users\User\Pictures\IA\Hotel\hotel10.webp"
-# HotelDescription = "The Cosmopolitan Lodge est un hôtel 3 étoiles élégant et abordable situé au cœur de Londres, offrant aux voyageurs un point d'ancrage idéal pour explorer la capitale britannique. Alliant un design moderne avec des touches historiques, cet hôtel séduit par son ambiance unique et son accueil chaleureux. Les chambres sont confortables et fonctionnelles, équipées de tout le nécessaire pour un séjour agréable, incluant une connexion Wi-Fi gratuite, une télévision à écran plat et un espace de travail. The Cosmopolitan Lodge dispose également d'un café sur place où les invités peuvent déguster des spécialités locales et internationales, ainsi qu'un bar cosy pour se détendre en fin de journée. L'établissement bénéficie d'une position stratégique, à proximité des principales attractions telles que le British Museum, Covent Garden, et le quartier de Soho, rendant la découverte de Londres facile et accessible. Parfait pour les voyageurs conscients de leur budget, The Cosmopolitan Lodge promet un séjour confortable et mémorable dans l'une des villes les plus dynamiques du monde."
+# HotelName = "Seaside Hostel"
+# HotelLocation = "Cancun, Mexique"
+# HotelPicture = r"C:\Users\User\Pictures\IA\Hotel\hotel12.webp"
+# HotelDescription = "Le Seaside Hostel est une auberge de jeunesse 2 étoiles située sur les magnifiques plages de Cancun, offrant une option d'hébergement abordable et conviviale pour les voyageurs désireux d'explorer les merveilles de la Riviera Maya. Cette auberge de jeunesse allie confort et simplicité, avec des dortoirs spacieux et des chambres privées, tous climatisés et équipés de casiers personnels pour la sécurité des biens. Le Seaside Hostel se distingue par son espace commun ouvert et lumineux, où les invités peuvent se rencontrer, partager des expériences et planifier leurs aventures. Une cuisine commune est disponible pour ceux qui souhaitent préparer leurs repas, tandis qu'un bar en plein air propose des boissons rafraîchissantes et des soirées animées. L'auberge de jeunesse offre un accès direct à la plage, permettant aux hôtes de profiter du soleil, de la mer et des sports nautiques. Des activités telles que des cours de plongée, des excursions en bateau et des visites culturelles sont également organisées par l'établissement. Avec son ambiance décontractée et son emplacement privilégié, le Seaside Hostel est l'endroit idéal pour les jeunes et les voyageurs à budget restreint cherchant à vivre une expérience authentique à Cancun."
 # HotelCapacity = 50
-# HotelStars = 3
+# HotelStars = 2
 
 driver = webdriver.Chrome()
 # driver.execute_script("window.sessionStorage.clear();")

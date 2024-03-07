@@ -24,8 +24,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const hotels = await response.json();
             hotels.forEach((hotel, index) => {
+                console.log(hotel.name);
                 createBestSection(hotel, type);
-                createModal(hotel, index, type);innerHTML
+                createModal(hotel, index, type);
             });
         } catch (error) {
             console.error('Error loading hotels:', error);
@@ -52,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function createBestSection(hotel, type) {
         const container = document.getElementById('besthotelcontainer');
+        console.log(hotel.name);
         if (hotel.pictureList == null) {
             hotel.pictureList = [];
             hotel.pictureList[0] = 'assets/img/header-bg.webp';
