@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        console.log('No token found. User must log in.');
+        window.location.href = 'index.html';
+        return;
+    }
     const emailInput = document.getElementById('emailInput');
     const changeEmailButton = document.getElementById('changeEmailButton');
     const changePasswordButton = document.getElementById('changePasswordButton');
@@ -12,16 +18,16 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("Please enter a valid email address.");
             return;
         }
-        updateUser({ email });
+        updateUser({ email },"email");
     });
 
     changePasswordButton.addEventListener('click', function () {
-        const password = document.getElementById('passwordInput').value;
-        if (!password) {
+        const passwordHash = document.getElementById('passwordInput').value;
+        if (!passwordHash) {
             alert("Password cannot be empty.");
             return;
         }
-        updateUser({ password });
+        updateUser({ passwordHash },"password");
     });
 
 
@@ -29,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
         deleteUser();
     });
 
-    async function updateUser(updateData) {
+    async function updateUser(updateData,type) {
         const token = localStorage.getItem('token');
         if (!token) {
             alert('Please log in to update your profile.');
@@ -37,10 +43,16 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         const userEmail = await getCurrentUserEmail(token);
-        const userId = await getCurrentUserId(userEmail, token);
-        updateData.id = userId;
+        const user = await getCurrentUser(userEmail, token)
+        updateData.id = user.id;
+        type === "password" ? updateData.email =  user.email : null;
+        // updateData.password = type=="password" ? password : null;
+        // updateData.passwordHash = type=="password" ? password : null;
+        updateData.role = user.role;
+        updateData.hotels = user.hotels;
+        console.log("update data: ",JSON.stringify(updateData));
         try {
-            const response = await fetch(`http://localhost:7071/api/User/Update/${userId}`, {
+            const response = await fetch(`http://localhost:7071/api/User/Update/${user.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -119,10 +131,29 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error fetching user profile:', error);
         }
     }
+    async function getCurrentUser(email, token) {
+        try {
+            const response = await fetch(`http://localhost:7071/api/User/Get/Email/${encodeURIComponent(email)}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch user profile');
+            }
+
+            const data = await response.json();
+            return data;
+
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+        }
+    }
+    
 
     async function getCurrentUserId(email, token) {
-        console.log('Fetching user ID for email:', email);
-        console.log('Token:', token);
         try {
             const response = await fetch(`http://localhost:7071/api/User/Get/Email/${encodeURIComponent(email)}`, {
                 method: 'GET',

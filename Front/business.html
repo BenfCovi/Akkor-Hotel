@@ -59,7 +59,7 @@
         <!-- Start: Business content -->
         <div class="container">
             <h1>Your business</h1><!-- Start: Add business -->
-            <div>
+            <div  id="formcreatebusiness">
                 <h3>Create your hotel on Akkor</h3>
                 <form class="d-flex flex-column">
                     <!-- Hotel name -->
@@ -94,7 +94,7 @@
                     <!-- Number of rooms -->
                     <div style="padding-bottom: 12px; padding-top: 12px;">
                         <small class="form-text">Number of rooms ?</small>
-                        <input class="form-control" type="number" id="numberOfRooms"
+                        <input class="form-control" type="number" id="numberOfRooms"    
                             placeholder="How many rooms do you have available in max?" required min="1">
                     </div>
 
@@ -135,7 +135,7 @@
                 </div><!-- End: List of reservation -->
             </div><!-- End: Business data -->
             <!-- Start: Edit business -->
-            <div>
+            <div id="formeditbusiness" id_hotel>
                 <h3>Edit your hotel on Akkor</h3>
                 <div class="d-flex flex-column">
                     <!-- Hotel name -->
@@ -144,8 +144,6 @@
                             <small class="form-text">Hotel name ?</small>
                             <input class="form-control" type="text" id="hotelName" placeholder="here your hotel name."
                                 required value="my_hotel_name">
-                            <button class="btn btn-primary" type="submit" style="margin-top: 12px;">Update my Hotel name
-                                on Akkor</button>
                         </form>
                     </div>
 
@@ -156,8 +154,6 @@
                             <input class="form-control" type="text" id="hotelLocation"
                                 placeholder="Here your hotel location, like Paris or London in example." required
                                 value="his_location">
-                            <button class="btn btn-primary" type="submit" style="margin-top: 12px;">Update my Hotel
-                                location on Akkor</button>
                         </form>
                     </div>
 
@@ -168,8 +164,6 @@
                             <textarea class="form-control" id="hotelDescription" rows="8"
                                 placeholder="Here your hotel description, you can talk about anything you want."
                                 required>my_current_description</textarea>
-                            <button class="btn btn-primary" type="submit" style="margin-top: 12px;">Update my Hotel
-                                description on Akkor</button>
                         </form>
                     </div>
 
@@ -179,8 +173,6 @@
                             <small class="form-text">Number of rooms ?</small>
                             <input class="form-control" type="number" id="numberOfRooms"
                                 placeholder="How many rooms do you have available in max?" required min="1" value="6">
-                            <button class="btn btn-primary" type="submit" style="margin-top: 12px;">Update how many
-                                rooms my Hotel has on Akkor</button>
                         </form>
                     </div>
 
@@ -190,8 +182,7 @@
                             <small class="form-text">Number of stars ?</small>
                             <input class="form-control" type="number" id="hotelStars"
                                 placeholder="How many stars does your hotel have?" required min="1" max="5" value="6">
-                            <button class="btn btn-primary" type="submit" style="margin-top: 12px;">Update how many
-                                stars my hotel has now</button>
+                            <button class="btn btn-primary" type="button" id="editbutton" style="margin-top: 12px;">Update my hotel has now</button>
                         </form>
                     </div>
                     <!-- Start: Hotel image -->
@@ -201,23 +192,17 @@
                             <small class="form-text">Add new picture</small>
                             <input class="form-control" type="file" id="newHotelPicture" name="picture" multiple
                                 required accept="image/*">
-                            <button class="btn btn-primary" type="submit" style="margin-top: 12px;">Add new pictures of
+                            <button class="btn btn-primary" type="button" class="editbutton" style="margin-top: 12px;">Add new pictures of
                                 my Hotel on Akkor</button>
                         </form>
                         <!-- End: Form new picture -->
                         <!-- Start: Current picture -->
-                        <div style="padding-top: 12px;padding-bottom: 12px;">
-                            <!-- Start: Form current picture -->
-                            <form class="d-flex flex-column align-items-center"
-                                style="padding-top: 12px;padding-bottom: 12px;"><img src="assets/img/header-bg.webp"
-                                    style="height: 200px;"><button class="btn btn-primary" type="submit"
-                                    style="margin-top: 12px;">Remove this pictures of my Hotel on Akkor</button></form>
-                            <!-- End: Form current picture -->
+                        <div id="imagecontainer" listimage style="padding-top: 12px;padding-bottom: 12px;">
                             <!-- Start: Form current picture -->
                             <form class="d-flex flex-column align-items-center"
                                 style="padding-top: 12px;padding-bottom: 12px;"><img
                                     src="assets/img/Header%20Picture.jpg" style="height: 200px;"><button
-                                    class="btn btn-primary" type="submit" style="margin-top: 12px;">Remove this pictures
+                                    class="btn btn-primary" type="button" id="deleteimagebutton" id_image style="margin-top: 12px;">Remove this pictures
                                     of my Hotel on Akkor</button></form><!-- End: Form current picture -->
                         </div><!-- End: Current picture -->
                     </div><!-- End: Hotel image -->
@@ -229,7 +214,7 @@
     <div class="offcanvas offcanvas-start bg-body" tabindex="-1" data-bs-backdrop="false" id="offcanvas-menu">
         <div class="offcanvas-header"><a
                 class="link-body-emphasis d-flex align-items-center me-md-auto mb-3 mb-md-0 text-decoration-none"
-                href="/"><i class="fa fa-user-circle me-3" style="font-size: 25px;"></i><span
+                href="/"><i class="fa fa-user-circle me-3" style="font-size: 25px;"></i><span id="userEmail"
                     class="fs-4">Your_name@mail.com</span></a><button class="btn-close" type="button" aria-label="Close"
                 data-bs-dismiss="offcanvas"></button></div>
         <div class="offcanvas-body d-flex flex-column justify-content-between pt-0">
@@ -270,7 +255,7 @@
                                     d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z">
                                 </path>
                             </svg> Update my status</a></li>
-                    <li class="nav-item"><a class="nav-link link-body-emphasis" href="admin.html"><svg
+                    <li class="nav-item"><a id="adminBoardLink" class="nav-link link-body-emphasis" href="admin.html"><svg
                                 xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
                                 viewBox="0 0 16 16" class="bi bi-people me-2">
                                 <path
@@ -358,6 +343,7 @@
     <script src="assets/js/Bold-BS4-Animated-Back-To-Top-backtotop.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/business.js"></script>
+    <script src="assets/js/sidebar.js"></script>
 </body>
 
 </html>

@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
             idHotel: inforeservation.hotelId,
             startDate: inforeservation.dateFrom,
             endDate: inforeservation.dateTo,
+            pictureList: inforeservation.pictureList,
             numberOfRoom: inforeservation.numberOfRooms
         };
         console.log('Reservation:', reservation);

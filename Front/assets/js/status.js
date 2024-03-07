@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        console.log('No token found. User must log in.');
+        window.location.href = 'index.html';
+        return;
+    }
     const updateStatusButton = document.getElementById('updateStatusButton');
     updateStatusButton.addEventListener('click', async function () {
         const token = localStorage.getItem('token');
